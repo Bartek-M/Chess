@@ -7,14 +7,15 @@ Multiplayer **Chess** game created using **Python**. It uses **socket** server t
 - Python 3.8 or above
 
 ## Setup
-Install dependencies
+Install required dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-Run a game
+**Run either server or game:**
 ```bash
-python main.py
+python server
+python game
 ```
 
 ## License
