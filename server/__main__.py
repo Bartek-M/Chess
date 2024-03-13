@@ -1,4 +1,4 @@
-import socket
+import server
 
 if __name__ == "__main__":
-    print("Server")
+    server.main()
