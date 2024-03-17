@@ -2,15 +2,12 @@ from pieces import King, Queen, Bishop, Knight, Rook, Pawn
 
 
 class Board:
-    def __init__(self, rows, cols):
-        self.rows = rows
-        self.cols = cols
+    def __init__(self):
+        self.board = [[None for _ in range(8)] for _ in range(8)]
 
-        self.board = [[None for _ in range(cols)] for _ in range(rows)]
-
-        for row in [0, self.rows - 1]:
+        for row in [0, 7]:
             color = "b" if row == 0 else "w"
-            pawn_row = row + (-1 if row == (self.rows - 1) else 1)
+            pawn_row = row + (-1 if row == 7 else 1)
 
             self.board[row][0] = Rook(row, 0, color)
             self.board[row][1] = Knight(row, 1, color)
@@ -23,3 +20,9 @@ class Board:
 
             for col in range(8):
                 self.board[pawn_row][col] = Pawn(row, col, color)
+
+    def select(self):
+        pass
+
+    def move(self):
+        pass

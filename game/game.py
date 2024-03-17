@@ -9,15 +9,12 @@ pygame.init()
 WIDTH, HEIGHT = (900, 900)
 FPS = 60
 
-GRID_SIZE = 8
-TILE_SIZE = WIDTH / GRID_SIZE
-
 
 def main():
     run = True
     clock = pygame.time.Clock()
 
-    board = Board(GRID_SIZE, GRID_SIZE)
+    board = Board()
     drawing = Drawing(WIDTH, HEIGHT)
     pygame.display.set_caption(f"Chess")
 
