@@ -1,5 +1,5 @@
 # Chess
-Multiplayer **Chess** game created using **Python**. It uses **socket** server to handle connections and game management. **Pygame** is used for UI and game play. It supports independent clients on different machines on different networks.
+Multiplayer **Chess** game created using **Python**. It uses **Socket** server to handle connections and game management. **Pygame** is used for UI and game play. It supports independent clients on different machines on different networks.
 
 > If you find any bugs, feel free to create a new **issue** on this repository.
 
@@ -11,6 +11,8 @@ Install required dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
+> NOTE: This app needs `.env` configuration file. Using `.env.example` create `.env` file and change it according to your needs. Without this, application may not work properly. 
 
 **Run either server or game:**
 ```bash

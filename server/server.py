@@ -10,8 +10,8 @@ from player import Player
 dotenv.load_dotenv()
 
 HOST = os.getenv("HOST", "127.0.0.1")
-PORT = os.getenv("PORT", "5000")
-BUFF_SIZE = 512
+PORT = os.getenv("PORT", 5000)
+BUFF_SIZE = os.getenv("BUFF_SIZE", 512)
 
 
 class Server:
