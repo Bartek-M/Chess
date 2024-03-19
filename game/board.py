@@ -5,14 +5,18 @@ from pieces import King, Queen, Bishop, Knight, Rook, Pawn
 
 class Board:
     LIGHT_COLOR = 238, 238, 238
-    DARK_COLOR = 136, 136, 136
+    DARK_COLOR = 116, 116, 116
+    SELECT_COLOR = 56, 220, 255
 
     def __init__(self, tile_size):
         self.tile_size = tile_size
+        self.current = None
+
+        self.color = "b"
         self.board = [[None for _ in range(8)] for _ in range(8)]
 
         for row in [0, 7]:
-            color = "b" if row == 0 else "w"
+            color = "b" if row == 0  else "w"
             pawn_row = row + (-1 if row == 7 else 1)
 
             self.board[row][0] = Rook(row, 0, color)
@@ -26,12 +30,6 @@ class Board:
 
             for col in range(8):
                 self.board[pawn_row][col] = Pawn(pawn_row, col, color)
-
-    def select(self):
-        pass
-
-    def move(self):
-        pass
 
     def draw(self, win):
         for i in range(8):
@@ -52,5 +50,32 @@ class Board:
             for piece in row:
                 if piece is None:
                     continue
-                
+
                 piece.draw(win)
+
+                if piece.selected:
+                    pygame.draw.rect(
+                        win,
+                        self.SELECT_COLOR,
+                        (
+                            piece.col * self.tile_size,
+                            piece.row * self.tile_size,
+                            self.tile_size,
+                            self.tile_size,
+                        ),
+                        5,
+                    )
+
+    def select(self, piece):
+        if self.current:
+            self.current.selected = False
+
+        if self.current == piece:
+            self.current = None
+            return
+
+        piece.selected = True
+        self.current = piece
+
+    def move(self):
+        pass

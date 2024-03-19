@@ -1,10 +1,10 @@
 import pygame
 
-SCALE_SIZE = 112
+SCALE_SIZE = 96
 
 white_assets = list(
     map(
-        lambda img: pygame.transform.scale(img, (SCALE_SIZE, SCALE_SIZE)),
+        lambda img: pygame.transform.smoothscale(img, (SCALE_SIZE, SCALE_SIZE)),
         [
             pygame.image.load("./assets/wk.png"),
             pygame.image.load("./assets/wq.png"),
@@ -18,7 +18,7 @@ white_assets = list(
 
 black_assets = list(
     map(
-        lambda img: pygame.transform.scale(img, (SCALE_SIZE, SCALE_SIZE)),
+        lambda img: pygame.transform.smoothscale(img, (SCALE_SIZE, SCALE_SIZE)),
         [
             pygame.image.load("./assets/bk.png"),
             pygame.image.load("./assets/bq.png"),
@@ -44,8 +44,8 @@ class Piece:
         self.selected = False
 
     def draw(self, win):
-        x = 112 * self.col
-        y = 112 * self.row
+        x = SCALE_SIZE * self.col
+        y = SCALE_SIZE * self.row
 
         win.blit(self.img, (x, y))
 
@@ -59,7 +59,7 @@ class King(Piece):
         self.img = white_assets[0] if self.color == "w" else black_assets[0]
 
     def __repr__(self):
-        return f"king {self.color} at [{self.row}; {self.col}]"
+        return f"king {self.color} at [{self.row}; {self.col}]; {self.selected}"
 
 
 class Queen(Piece):
@@ -68,7 +68,7 @@ class Queen(Piece):
         self.img = white_assets[1] if self.color == "w" else black_assets[1]
 
     def __repr__(self):
-        return f"queen {self.color} at [{self.row}; {self.col}]"
+        return f"queen {self.color} at [{self.row}; {self.col}]; {self.selected}"
 
 
 class Bishop(Piece):
@@ -77,7 +77,7 @@ class Bishop(Piece):
         self.img = white_assets[2] if self.color == "w" else black_assets[2]
 
     def __repr__(self):
-        return f"bishop {self.color} at [{self.row}; {self.col}]"
+        return f"bishop {self.color} at [{self.row}; {self.col}]; {self.selected}"
 
 
 class Knight(Piece):
@@ -86,7 +86,7 @@ class Knight(Piece):
         self.img = white_assets[3] if self.color == "w" else black_assets[3]
 
     def __repr__(self):
-        return f"knight {self.color} at [{self.row}; {self.col}]"
+        return f"knight {self.color} at [{self.row}; {self.col}]; {self.selected}"
 
 
 class Rook(Piece):
@@ -95,7 +95,7 @@ class Rook(Piece):
         self.img = white_assets[4] if self.color == "w" else black_assets[4]
 
     def __repr__(self):
-        return f"rook {self.color} at [{self.row}; {self.col}]"
+        return f"rook {self.color} at [{self.row}; {self.col}]; {self.selected}"
 
 
 class Pawn(Piece):
@@ -104,4 +104,4 @@ class Pawn(Piece):
         self.img = white_assets[5] if self.color == "w" else black_assets[5]
 
     def __repr__(self):
-        return f"pawn {self.color} at [{self.row}; {self.col}]"
+        return f"pawn {self.color} at [{self.row}; {self.col}]; {self.selected}"
