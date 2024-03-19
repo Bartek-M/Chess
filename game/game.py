@@ -6,7 +6,9 @@ from board import Board
 
 pygame.init()
 
-WIDTH, HEIGHT = (900, 900)
+WIDTH, HEIGHT = (896, 896)
+TILE_SIZE = WIDTH // 8
+
 FPS = 60
 
 
@@ -14,9 +16,9 @@ def main():
     run = True
     clock = pygame.time.Clock()
 
-    board = Board()
-    drawing = Drawing(WIDTH, HEIGHT)
-    pygame.display.set_caption(f"Chess")
+    board = Board(TILE_SIZE)
+    drawing = Drawing(WIDTH, HEIGHT, board)
+    pygame.display.set_caption(f"Chess Game")
 
     while run:
         clock.tick(FPS)
@@ -24,7 +26,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
-
-        pygame.display.update()
+        
+        drawing.draw()
 
     pygame.quit()

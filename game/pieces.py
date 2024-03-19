@@ -1,8 +1,10 @@
 import pygame
 
+SCALE_SIZE = 112
+
 white_assets = list(
     map(
-        lambda img: pygame.transform.scale(img, (128, 128)),
+        lambda img: pygame.transform.scale(img, (SCALE_SIZE, SCALE_SIZE)),
         [
             pygame.image.load("./assets/wk.png"),
             pygame.image.load("./assets/wq.png"),
@@ -16,7 +18,7 @@ white_assets = list(
 
 black_assets = list(
     map(
-        lambda img: pygame.transform.scale(img, (128, 128)),
+        lambda img: pygame.transform.scale(img, (SCALE_SIZE, SCALE_SIZE)),
         [
             pygame.image.load("./assets/bk.png"),
             pygame.image.load("./assets/bq.png"),
@@ -42,7 +44,10 @@ class Piece:
         self.selected = False
 
     def draw(self, win):
-        pass
+        x = 112 * self.col
+        y = 112 * self.row
+
+        win.blit(self.img, (x, y))
 
     def set_pos(self, pos):
         self.row, self.col = pos
@@ -60,7 +65,7 @@ class King(Piece):
 class Queen(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.img = white_assets[0] if self.color == "w" else black_assets[0]
+        self.img = white_assets[1] if self.color == "w" else black_assets[1]
 
     def __repr__(self):
         return f"queen {self.color} at [{self.row}; {self.col}]"
@@ -69,7 +74,7 @@ class Queen(Piece):
 class Bishop(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.img = white_assets[0] if self.color == "w" else black_assets[0]
+        self.img = white_assets[2] if self.color == "w" else black_assets[2]
 
     def __repr__(self):
         return f"bishop {self.color} at [{self.row}; {self.col}]"
@@ -78,7 +83,7 @@ class Bishop(Piece):
 class Knight(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.img = white_assets[0] if self.color == "w" else black_assets[0]
+        self.img = white_assets[3] if self.color == "w" else black_assets[3]
 
     def __repr__(self):
         return f"knight {self.color} at [{self.row}; {self.col}]"
@@ -87,7 +92,7 @@ class Knight(Piece):
 class Rook(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.img = white_assets[0] if self.color == "w" else black_assets[0]
+        self.img = white_assets[4] if self.color == "w" else black_assets[4]
 
     def __repr__(self):
         return f"rook {self.color} at [{self.row}; {self.col}]"
@@ -96,7 +101,7 @@ class Rook(Piece):
 class Pawn(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.img = white_assets[0] if self.color == "w" else black_assets[0]
+        self.img = white_assets[5] if self.color == "w" else black_assets[5]
 
     def __repr__(self):
         return f"pawn {self.color} at [{self.row}; {self.col}]"
