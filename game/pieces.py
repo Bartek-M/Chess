@@ -19,14 +19,14 @@ class Piece:
         self.king = False
         self.pawn = False
 
-    def draw(self, win, tile_size):
-        win.blit(self.img, (tile_size * self.col, tile_size * self.row))
+    def draw(self, win, tile_size, padding):
+        x = self.col * tile_size + padding
+        y = self.row * tile_size + padding
 
-        if not self.selected:
-            return
+        if self.selected:
+            pygame.draw.rect(win, self.SELECT_COLOR, (x, y, tile_size, tile_size), 5)
 
-        x, y = self.col * tile_size, self.row * tile_size
-        pygame.draw.rect(win, self.SELECT_COLOR, (x, y, tile_size, tile_size), 5)
+        win.blit(self.img, (x, y))
 
     def set_pos(self, pos):
         self.row, self.col = pos

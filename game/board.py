@@ -10,8 +10,9 @@ class Board:
     GRAY_COLOR = 200, 200, 200
     RED_COLOR = 255, 50, 50
 
-    def __init__(self, tile_size):
+    def __init__(self, tile_size, padding):
         self.tile_size = tile_size
+        self.padding = padding
         self.load_assets()
 
         self.color = "b"
@@ -41,8 +42,8 @@ class Board:
         for i in range(8):
             for j in range(8):
                 color = self.LIGHT_COLOR if (i + j) % 2 == 0 else self.DARK_COLOR
-                x = j * self.tile_size
-                y = i * self.tile_size
+                x = self.padding + j * self.tile_size
+                y = self.padding + i * self.tile_size
 
                 pygame.draw.rect(win, color, (x, y, self.tile_size, self.tile_size))
                 piece = self.board[i][j]
@@ -60,9 +61,12 @@ class Board:
                     pygame.draw.circle(win, color, (center_x, center_y), radius, border)
 
                 if piece is not None:
-                    piece.draw(win, self.tile_size)
+                    piece.draw(win, self.tile_size, self.padding)
 
     def select(self, piece):
+        if piece is None:
+            return
+
         if self.current:
             self.current.selected = False
 
