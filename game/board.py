@@ -17,7 +17,7 @@ class Board:
 
         self.load_assets()
 
-        self.color = "b"
+        self.color = "w"
         self.board = self.generate_board()
 
         self.current = None
@@ -55,7 +55,7 @@ class Board:
                 pygame.draw.rect(win, color, (x, y, self.tile_size, self.tile_size))
                 piece = self.board[i][j]
 
-                if (i, j) in self.valid_moves:
+                if (j, i) in self.valid_moves:
                     color, radius, border = (
                         (self.GRAY_COLOR, 12, 0)
                         if piece is None
@@ -77,23 +77,38 @@ class Board:
         if self.current:
             self.current.selected = False
 
+        if piece.color != self.color:
+            return self.reset_selected()
+
         if self.current == piece:
-            self.current = None
-            self.valid_moves = []
-            return
+            return self.reset_selected()
 
         piece.selected = True
         self.current = piece
         self.valid_moves = piece.valid_moves(self.board)
 
+    def reset_selected(self):
+        if not self.current:
+            return
+
+        self.current.selected = False
+        self.current = None
+        self.valid_moves = []
+
     def move(self, piece, pos):
         x, y = pos
 
         self.board[piece.row][piece.col] = None
-        self.board[y][x] = piece
-
-        piece.set_pos((x, y))
         self.select(piece)
+
+        if y == 0 and piece.pawn:
+            self.board[y][x] = Queen(y, x, piece.color, 1)
+            del piece
+            return
+
+        self.board[y][x] = piece
+        piece.set_pos((x, y))
+
 
     def load_assets(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))

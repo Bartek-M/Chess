@@ -24,10 +24,12 @@ def click(mouse_pos, board):
     x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
     piece = board.board[y][x]
 
-    if (x, y) not in board.valid_moves and board.current:
+    if (x, y) in board.valid_moves and board.current:
         board.move(board.current, (x, y))
     elif piece:
         board.select(piece)
+    else:
+        board.reset_selected()
 
 
 def main():

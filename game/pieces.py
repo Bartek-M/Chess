@@ -31,14 +31,30 @@ class Piece:
     def set_pos(self, pos):
         self.col, self.row = pos
 
+    def is_avail(self, board, pos):
+        x, y = pos
+
+        if not (0 <= x <= 7 and 0 <= y <= 7):
+            return None
+
+        piece = board[y][x]
+
+        if piece is None:
+            return False
+
+        if piece.color == self.color:
+            return None
+
+        return piece
+
 
 class King(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.king = True
 
-    def valid_moves(self, board) -> tuple:
-        moves = ()
+    def valid_moves(self, board):
+        moves = []
 
         return moves
 
@@ -47,8 +63,8 @@ class King(Piece):
 
 
 class Queen(Piece):
-    def valid_moves(self, board) -> tuple:
-        moves = ()
+    def valid_moves(self, board):
+        moves = []
 
         return moves
 
@@ -57,8 +73,8 @@ class Queen(Piece):
 
 
 class Bishop(Piece):
-    def valid_moves(self, board) -> tuple:
-        moves = ()
+    def valid_moves(self, board):
+        moves = []
 
         return moves
 
@@ -67,8 +83,8 @@ class Bishop(Piece):
 
 
 class Knight(Piece):
-    def valid_moves(self, board) -> tuple:
-        moves = ()
+    def valid_moves(self, board):
+        moves = []
 
         return moves
 
@@ -77,8 +93,8 @@ class Knight(Piece):
 
 
 class Rook(Piece):
-    def valid_moves(self, board) -> tuple:
-        moves = ()
+    def valid_moves(self, board):
+        moves = []
 
         return moves
 
@@ -91,8 +107,20 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         self.pawn = True
 
-    def valid_moves(self, board) -> tuple:
-        moves = ()
+    def valid_moves(self, board):
+        moves = []
+
+        if self.is_avail(board, (self.col, self.row - 1)) == False:
+            moves.append((self.col, self.row - 1))
+
+        if self.row == 6 and self.is_avail(board, (self.col, self.row - 2)) == False:
+            moves.append((self.col, self.row - 2))
+
+        if self.is_avail(board, (self.col - 1, self.row - 1)):
+            moves.append((self.col - 1, self.row - 1))
+
+        if self.is_avail(board, (self.col + 1, self.row - 1)):
+            moves.append((self.col + 1, self.row - 1))
 
         return moves
 
