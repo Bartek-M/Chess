@@ -3,7 +3,8 @@ import random
 
 import pygame
 
-from pieces import King, Queen, Bishop, Knight, Rook, Pawn
+from pieces import Queen
+from utils import generate_board, load_assets
 
 
 class Board:
@@ -17,41 +18,13 @@ class Board:
         self.tile_size = tile_size
         self.pad_x, self.pad_y = padding
 
-        self.load_assets()
+        self.white_assets, self.black_assets = load_assets(self.tile_size)
 
         self.color = random.choice(("w", "b"))
-        self.board = self.generate_board(self.color)
+        self.board = generate_board(self.color)
 
         self.current = None
         self.valid_moves = []
-
-    @staticmethod
-    def generate_board(player_color):
-        board = [[None for _ in range(8)] for _ in range(8)]
-
-        for row in [0, 7]:
-            if player_color == "w":
-                color = "b" if row == 0 else "w"
-                k_pos, q_pos = 4, 3
-            else:
-                color = "b" if row == 7 else "w"
-                k_pos, q_pos = 3, 4
-
-            pawn_row = row + (-1 if row == 7 else 1)
-
-            board[row][0] = Rook(row, 0, color, 4)
-            board[row][1] = Knight(row, 1, color, 3)
-            board[row][2] = Bishop(row, 2, color, 2)
-            board[row][q_pos] = Queen(row, q_pos, color, 1)
-            board[row][k_pos] = King(row, k_pos, color, 0)
-            board[row][5] = Bishop(row, 5, color, 2)
-            board[row][6] = Knight(row, 6, color, 3)
-            board[row][7] = Rook(row, 7, color, 4)
-
-            for col in range(8):
-                board[pawn_row][col] = Pawn(pawn_row, col, color, 5)
-
-        return board
 
     def draw(self, win):
         for i in range(8):
@@ -116,37 +89,3 @@ class Board:
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
-
-    def load_assets(self):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-
-        self.white_assets = list(
-            map(
-                lambda img: pygame.transform.smoothscale(
-                    img, (self.tile_size, self.tile_size)
-                ),
-                [
-                    pygame.image.load(os.path.join(current_dir, "assets", "wk.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "wq.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "wb.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "wn.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "wr.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "wp.png")),
-                ],
-            )
-        )
-        self.black_assets = list(
-            map(
-                lambda img: pygame.transform.smoothscale(
-                    img, (self.tile_size, self.tile_size)
-                ),
-                [
-                    pygame.image.load(os.path.join(current_dir, "assets", "bk.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "bq.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "bb.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "bn.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "br.png")),
-                    pygame.image.load(os.path.join(current_dir, "assets", "bp.png")),
-                ],
-            )
-        )
