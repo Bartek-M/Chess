@@ -1,4 +1,6 @@
 import os
+import random
+
 import pygame
 
 from pieces import King, Queen, Bishop, Knight, Rook, Pawn
@@ -17,25 +19,31 @@ class Board:
 
         self.load_assets()
 
-        self.color = "w"
-        self.board = self.generate_board()
+        self.color = random.choice(("w", "b"))
+        self.board = self.generate_board(self.color)
 
         self.current = None
         self.valid_moves = []
 
     @staticmethod
-    def generate_board():
+    def generate_board(player_color):
         board = [[None for _ in range(8)] for _ in range(8)]
 
         for row in [0, 7]:
-            color = "b" if row == 0 else "w"
+            if player_color == "w":
+                color = "b" if row == 0 else "w"
+                k_pos, q_pos = 4, 3
+            else:
+                color = "b" if row == 7 else "w"
+                k_pos, q_pos = 3, 4
+
             pawn_row = row + (-1 if row == 7 else 1)
 
             board[row][0] = Rook(row, 0, color, 4)
             board[row][1] = Knight(row, 1, color, 3)
             board[row][2] = Bishop(row, 2, color, 2)
-            board[row][3] = Queen(row, 3, color, 1)
-            board[row][4] = King(row, 4, color, 0)
+            board[row][q_pos] = Queen(row, q_pos, color, 1)
+            board[row][k_pos] = King(row, k_pos, color, 0)
             board[row][5] = Bishop(row, 5, color, 2)
             board[row][6] = Knight(row, 6, color, 3)
             board[row][7] = Rook(row, 7, color, 4)
@@ -108,7 +116,6 @@ class Board:
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
-
 
     def load_assets(self):
         current_dir = os.path.dirname(os.path.abspath(__file__))
