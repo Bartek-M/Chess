@@ -45,7 +45,7 @@ class King(Piece):
         return moves
 
     def __repr__(self):
-        return f"king {self.color} at [{self.row}; {self.col}]; {self.selected}"
+        return f"king {self.color} at [{self.row}; {self.col}]"
 
 
 class Queen(Piece):
@@ -55,7 +55,7 @@ class Queen(Piece):
         return moves
 
     def __repr__(self):
-        return f"queen {self.color} at [{self.row}; {self.col}]; {self.selected}"
+        return f"queen {self.color} at [{self.row}; {self.col}]"
 
 
 class Bishop(Piece):
@@ -65,7 +65,7 @@ class Bishop(Piece):
         return moves
 
     def __repr__(self):
-        return f"bishop {self.color} at [{self.row}; {self.col}]; {self.selected}"
+        return f"bishop {self.color} at [{self.row}; {self.col}]"
 
 
 class Knight(Piece):
@@ -75,17 +75,31 @@ class Knight(Piece):
         return moves
 
     def __repr__(self):
-        return f"knight {self.color} at [{self.row}; {self.col}]; {self.selected}"
+        return f"knight {self.color} at [{self.row}; {self.col}]"
 
 
 class Rook(Piece):
     def valid_moves(self, board):
         moves = []
 
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+            for d in range(1, 6):
+                x = self.col + dx * d
+                y = self.row + dy * d
+                avail = is_avail(board, (x, y), self.color)
+
+                if avail is not None:
+                    moves.append((x, y))
+                else:
+                    break
+
+                if avail:
+                    break
+
         return moves
 
     def __repr__(self):
-        return f"rook {self.color} at [{self.row}; {self.col}]; {self.selected}"
+        return f"rook {self.color} at [{self.row}; {self.col}]"
 
 
 class Pawn(Piece):
@@ -99,7 +113,10 @@ class Pawn(Piece):
         if is_avail(board, (self.col, self.row - 1), self.color) == False:
             moves.append((self.col, self.row - 1))
 
-        if self.row == 6 and is_avail(board, (self.col, self.row - 2), self.color) == False:
+        if (
+            self.row == 6
+            and is_avail(board, (self.col, self.row - 2), self.color) == False
+        ):
             moves.append((self.col, self.row - 2))
 
         if is_avail(board, (self.col - 1, self.row - 1), self.color):
@@ -111,4 +128,4 @@ class Pawn(Piece):
         return moves
 
     def __repr__(self):
-        return f"pawn {self.color} at [{self.row}; {self.col}]; {self.selected}"
+        return f"pawn {self.color} at [{self.row}; {self.col}]"

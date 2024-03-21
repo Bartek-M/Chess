@@ -34,7 +34,7 @@ def generate_board(player_color):
 def is_avail(board, pos, color):
     x, y = pos
 
-    if not (0 <= x <= 7 and 0 <= y <= 7):
+    if not (0 <= x < 8 and 0 <= y < 8):
         return None
 
     piece = board[y][x]
