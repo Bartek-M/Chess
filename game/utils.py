@@ -28,6 +28,8 @@ def generate_board(player_color):
         for col in range(8):
             board[pawn_row][col] = Pawn(pawn_row, col, color, 5)
 
+        board.append(player_color)
+
     return board
 
 

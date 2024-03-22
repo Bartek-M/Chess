@@ -19,6 +19,7 @@ class Piece:
         self.selected = False
 
         self.king = False
+        self.rook = False
         self.pawn = False
 
     def draw(self, win, assets, tile_size, padding):
@@ -38,6 +39,7 @@ class King(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.king = True
+        self.moved = False
 
     def valid_moves(self, board):
         moves = []
@@ -53,6 +55,29 @@ class King(Piece):
 
                 if avail is not None:
                     moves.append((x, y))
+
+        if self.moved:
+            return moves
+
+        for d in [-1, 1]:
+            dx = 1
+
+            while True:
+                x = self.col + dx * d
+
+                if not 0 <= x < 8:
+                    break
+
+                piece = board[self.row][x]
+
+                if piece is None:
+                    dx += 1
+                    continue
+
+                if piece.color == self.color and piece.rook and not piece.moved:
+                    moves.append((piece.col, self.row))
+
+                break
 
         return moves
 
@@ -147,6 +172,11 @@ class Knight(Piece):
 
 
 class Rook(Piece):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.rook = True
+        self.moved = False
+
     def valid_moves(self, board):
         moves = []
 
@@ -177,21 +207,22 @@ class Pawn(Piece):
 
     def valid_moves(self, board):
         moves = []
+        d = 1 if board[-1] == self.color else -1
 
-        if is_avail(board, (self.col, self.row - 1), self.color) == False:
-            moves.append((self.col, self.row - 1))
+        if is_avail(board, (self.col, self.row - 1 * d), self.color) == False:
+            moves.append((self.col, self.row - 1 * d))
 
-        if (
-            self.row == 6
-            and is_avail(board, (self.col, self.row - 2), self.color) == False
-        ):
-            moves.append((self.col, self.row - 2))
+            if (
+                self.row == 6 if board[-1] == self.color else 1
+                and is_avail(board, (self.col, self.row - 2 * d), self.color) == False
+            ):
+                moves.append((self.col, self.row - 2 * d))
 
-        if is_avail(board, (self.col - 1, self.row - 1), self.color):
-            moves.append((self.col - 1, self.row - 1))
+        if is_avail(board, (self.col - 1, self.row - 1 * d), self.color):
+            moves.append((self.col - 1, self.row - 1 * d))
 
-        if is_avail(board, (self.col + 1, self.row - 1), self.color):
-            moves.append((self.col + 1, self.row - 1))
+        if is_avail(board, (self.col + 1, self.row - 1 * d), self.color):
+            moves.append((self.col + 1, self.row - 1 * d))
 
         return moves
 

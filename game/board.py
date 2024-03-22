@@ -12,6 +12,7 @@ class Board:
     DARK_COLOR = 116, 116, 116
 
     GRAY_COLOR = 200, 200, 200
+    GREEN_COLOR = 56, 220, 255
     RED_COLOR = 255, 50, 50
 
     def __init__(self, tile_size, padding):
@@ -40,7 +41,15 @@ class Board:
                     color, radius, border = (
                         (self.GRAY_COLOR, 12, 0)
                         if piece is None
-                        else (self.RED_COLOR, self.tile_size * 0.35, 5)
+                        else (
+                            (
+                                self.RED_COLOR
+                                if piece.color != self.color
+                                else self.GREEN_COLOR
+                            ),
+                            self.tile_size * 0.35,
+                            5,
+                        )
                     )
 
                     center_x = x + self.tile_size // 2
@@ -58,10 +67,7 @@ class Board:
         if self.current:
             self.current.selected = False
 
-        if piece.color != self.color:
-            return self.reset_selected()
-
-        if self.current == piece:
+        if self.current == piece:  # or piece.color != self.color:
             return self.reset_selected()
 
         piece.selected = True
@@ -86,6 +92,22 @@ class Board:
             self.board[y][x] = Queen(y, x, piece.color, 1)
             del piece
             return
+
+        if piece.king or piece.rook:
+            piece.moved = True
+
+        if piece.king and (new := self.board[y][x]) and new.rook:
+            self.board[y][x] = None
+
+            if x > piece.col:
+                new_x = x - (3 if piece.col == 3 else 2)
+                x = piece.col + 2
+            else:
+                new_x = x + (2 if piece.col == 3 else 3)
+                x = piece.col - 2
+
+            self.board[y][new_x] = new
+            new.set_pos((new_x, y))
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
