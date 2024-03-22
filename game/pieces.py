@@ -128,6 +128,18 @@ class Knight(Piece):
     def valid_moves(self, board):
         moves = []
 
+        for dx in [-2, -1, 1, 2]:
+            for dy in [-2, -1, 1, 2]:
+                if abs(dx) == abs(dy):
+                    continue
+
+                x = self.col + dx
+                y = self.row + dy
+                avail = is_avail(board, (x, y), self.color)
+
+                if avail is not None:
+                    moves.append((x, y))
+
         return moves
 
     def __repr__(self):
