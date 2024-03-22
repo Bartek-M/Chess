@@ -42,6 +42,18 @@ class King(Piece):
     def valid_moves(self, board):
         moves = []
 
+        for dx in [-1, 0, 1]:
+            for dy in [-1, 0, 1]:
+                if (dx, dy) == (0, 0):
+                    continue
+
+                x = self.col + dx
+                y = self.row + dy
+                avail = is_avail(board, (x, y), self.color)
+
+                if avail is not None:
+                    moves.append((x, y))
+
         return moves
 
     def __repr__(self):
