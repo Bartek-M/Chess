@@ -62,6 +62,20 @@ class Bishop(Piece):
     def valid_moves(self, board):
         moves = []
 
+        for dx, dy in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
+            for d in range(1, 8):
+                x = self.col + dx * d
+                y = self.row + dy * d
+                avail = is_avail(board, (x, y), self.color)
+
+                if avail is not None:
+                    moves.append((x, y))
+                else:
+                    break
+
+                if avail:
+                    break
+
         return moves
 
     def __repr__(self):
@@ -83,7 +97,7 @@ class Rook(Piece):
         moves = []
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
-            for d in range(1, 6):
+            for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
                 avail = is_avail(board, (x, y), self.color)
