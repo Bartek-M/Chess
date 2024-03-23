@@ -16,33 +16,31 @@ FPS = 60
 
 def click(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
-
-    if not (PAD_X <= mouse_x < (WIDTH - PAD_X) and PAD_Y <= mouse_y < (HEIGHT - PAD_Y)):
-        return
-
     x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
-    piece = board.board[y][x]
 
-    if (x, y) in board.valid_moves and board.current:
-        return board.move(board.current, (x, y))
-    
-    if piece:        
-        if not piece.dragged:
-            return board.select(piece)
+    if not (0 <= x < 8 and 0 <= y < 8):
+        return board.reset_selected()
 
-        piece.dragged = False
-        return
-        
+    if board.current:
+        if (x, y) in board.valid_moves:
+            return board.move(board.current, (x, y))
+                
+        board.current.dragged = False
+
+        if board.current.first_select:
+            board.current.first_select = False
+            return
+
     board.reset_selected()
 
 
 def drag(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
-
-    if not (PAD_X <= mouse_x < (WIDTH - PAD_X) and PAD_Y <= mouse_y < (HEIGHT - PAD_Y)):
-        return
-
     x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
+
+    if not (0 <= x < 8 and 0 <= y < 8):
+        return board.reset_selected()
+
     piece = board.board[y][x]
 
     if not piece or piece.dragged:
@@ -51,8 +49,9 @@ def drag(mouse_pos, board):
     if piece != board.current:
         board.reset_selected()
 
-    if not len(board.valid_moves):
+    if not board.current:
         board.select(piece)
+        piece.first_select = True 
 
     piece.dragged = True
 
@@ -73,11 +72,10 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                drag(pygame.mouse.get_pos(), board)
-
             if event.type == pygame.MOUSEBUTTONUP:
                 click(pygame.mouse.get_pos(), board)
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                drag(pygame.mouse.get_pos(), board)
 
         drawing.update()
 

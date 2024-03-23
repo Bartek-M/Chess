@@ -18,6 +18,7 @@ class Piece:
         self.img = img
 
         self.selected = False
+        self.first_select = False
         self.dragged = False
 
         self.king = False

@@ -73,6 +73,9 @@ class Board:
         if self.current:
             self.current.selected = False
 
+        if self.current == piece:
+            return self.reset_selected()
+
         piece.selected = True
         self.current = piece
         self.valid_moves = piece.valid_moves(self.board)
@@ -82,6 +85,7 @@ class Board:
             return
 
         self.current.selected = False
+        self.current.first_select = False
         self.current.dragged = False
 
         self.current = None
