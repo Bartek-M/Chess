@@ -24,11 +24,11 @@ def click(mouse_pos, board):
     if board.current:
         if (x, y) in board.valid_moves:
             return board.move(board.current, (x, y))
-
+        
         piece = board.board[y][x]
         board.current.dragged = False
 
-        if board.current.first_select or piece != board.current:
+        if board.current.first_select or (piece and piece != board.current):
             board.current.first_select = False
             return
 
@@ -46,6 +46,9 @@ def drag(mouse_pos, board):
 
     if not piece or piece.dragged:
         return
+    
+    if board.current and (x, y) in board.valid_moves:
+        return board.move(board.current, (x, y))
 
     if piece != board.current:
         board.reset_selected()
