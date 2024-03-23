@@ -16,7 +16,9 @@ class Piece:
 
         self.color = color  # w | b
         self.img = img
+
         self.selected = False
+        self.dragged = False
 
         self.king = False
         self.rook = False
@@ -28,6 +30,11 @@ class Piece:
 
         if self.selected:
             pygame.draw.rect(win, self.SELECT_COLOR, (x, y, tile_size, tile_size), 5)
+
+        if self.dragged:
+            x, y = pygame.mouse.get_pos()
+            x -= tile_size // 2
+            y -= tile_size // 2
 
         win.blit(assets[self.img], (x, y))
 

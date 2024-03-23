@@ -47,7 +47,7 @@ class Board:
                                 if piece.color != self.current.color
                                 else self.GREEN_COLOR
                             ),
-                            self.tile_size * 0.35,
+                            self.tile_size * 0.4,
                             5,
                         )
                     )
@@ -57,18 +57,21 @@ class Board:
 
                     pygame.draw.circle(win, color, (center_x, center_y), radius, border)
 
-                if piece is None:
+                if piece is None or piece.dragged:
                     continue
 
                 assets = self.black_assets if piece.color == "b" else self.white_assets
                 piece.draw(win, assets, self.tile_size, (self.pad_x, self.pad_y))
 
+        if self.current and self.current.dragged:
+            assets = (
+                self.black_assets if self.current.color == "b" else self.white_assets
+            )
+            self.current.draw(win, assets, self.tile_size, (self.pad_x, self.pad_y))
+
     def select(self, piece):
         if self.current:
             self.current.selected = False
-
-        if self.current == piece:  # or piece.color != self.color:
-            return self.reset_selected()
 
         piece.selected = True
         self.current = piece
@@ -79,6 +82,8 @@ class Board:
             return
 
         self.current.selected = False
+        self.current.dragged = False
+
         self.current = None
         self.valid_moves = []
 
@@ -86,7 +91,7 @@ class Board:
         x, y = pos
 
         self.board[piece.row][piece.col] = None
-        self.select(piece)
+        self.reset_selected()
 
         if y == 0 and piece.pawn:
             self.board[y][x] = Queen(y, x, piece.color, 1)
