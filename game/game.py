@@ -7,8 +7,8 @@ from board import Board
 
 pygame.init()
 
-WIDTH, HEIGHT = (720, 800)
-PAD_X, PAD_Y = (40, 80)  # Dynamic, but suggested (40, 80) as minimum
+PAD_X, PAD_Y = (60, 80)  # Dynamic, but suggested (40, 80) as minimum
+WIDTH, HEIGHT = (640 + PAD_X * 2, 640 + PAD_Y * 2 + 20)
 
 TILE_SIZE = (WIDTH - PAD_X * 2) // 8
 FPS = 60
@@ -24,10 +24,11 @@ def click(mouse_pos, board):
     if board.current:
         if (x, y) in board.valid_moves:
             return board.move(board.current, (x, y))
-                
+
+        piece = board.board[y][x]
         board.current.dragged = False
 
-        if board.current.first_select:
+        if board.current.first_select or piece != board.current:
             board.current.first_select = False
             return
 
@@ -51,7 +52,7 @@ def drag(mouse_pos, board):
 
     if not board.current:
         board.select(piece)
-        piece.first_select = True 
+        piece.first_select = True
 
     piece.dragged = True
 
@@ -61,7 +62,7 @@ def main():
     clock = pygame.time.Clock()
 
     board = Board(TILE_SIZE, (PAD_X, PAD_Y))
-    drawing = Drawing(WIDTH, HEIGHT, board)
+    drawing = Drawing(WIDTH, HEIGHT, (PAD_X, PAD_Y), board)
 
     pygame.display.set_caption(f"Chess Game")
 
