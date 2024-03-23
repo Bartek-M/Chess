@@ -56,8 +56,13 @@ class King(Piece):
                 if avail is not None:
                     moves.append((x, y))
 
-        if self.moved:
-            return moves
+        if not self.moved:
+            moves += self.check_castle(board)
+
+        return moves
+
+    def check_castle(self, board):
+        moves = []
 
         for d in [-1, 1]:
             dx = 1
@@ -213,7 +218,9 @@ class Pawn(Piece):
             moves.append((self.col, self.row - 1 * d))
 
             if (
-                self.row == 6 if board[-1] == self.color else 1
+                self.row == 6
+                if board[-1] == self.color
+                else 1
                 and is_avail(board, (self.col, self.row - 2 * d), self.color) == False
             ):
                 moves.append((self.col, self.row - 2 * d))

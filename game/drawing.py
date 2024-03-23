@@ -10,10 +10,13 @@ class Drawing:
         self.window = pygame.display.set_mode((width, height))
         self.board = board
 
+        self.font = pygame.font.Font(None, 28)
         self.draw()
 
     def draw(self):
         self.window.fill(self.BACKGROUND)
-        self.board.draw(self.window)
+        self.board.draw_cords(self.window, self.font)
 
+    def update(self):
+        self.board.draw(self.window)
         pygame.display.update()

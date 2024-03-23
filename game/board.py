@@ -44,7 +44,7 @@ class Board:
                         else (
                             (
                                 self.RED_COLOR
-                                if piece.color != self.color
+                                if piece.color != self.current.color
                                 else self.GREEN_COLOR
                             ),
                             self.tile_size * 0.35,
@@ -111,3 +111,31 @@ class Board:
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
+
+    def draw_cords(self, win, font):
+        nums = ["8", "7", "6", "5", "4", "3", "2", "1"]
+        alph = ["a", "b", "c", "d", "e", "f", "g", "h"]
+
+        if self.color == "b":
+            nums = nums[::-1]
+            alph = alph[::-1]
+
+        for i in range(8):
+            text = font.render(str(nums[i]), True, self.GRAY_COLOR)
+            win.blit(
+                text,
+                (
+                    self.pad_x - 20,
+                    i * self.tile_size + (self.pad_y + self.tile_size // 2 - 10),
+                ),
+            )
+
+        for i, l in enumerate(alph):
+            text = font.render(l, True, self.GRAY_COLOR)
+            win.blit(
+                text,
+                (
+                    i * self.tile_size + (self.pad_x + self.tile_size // 2 - 5),
+                    8 * self.tile_size + self.pad_y + 5,
+                ),
+            )

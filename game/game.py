@@ -17,7 +17,7 @@ def click(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
 
     if not (
-        PAD_X <= mouse_x <= (WIDTH - PAD_X) and PAD_Y <= mouse_y <= (HEIGHT - PAD_Y)
+        PAD_X <= mouse_x < (WIDTH - PAD_X) and PAD_Y <= mouse_y < (HEIGHT - PAD_Y)
     ):
         return
 
@@ -54,6 +54,6 @@ def main():
 
                 click(pygame.mouse.get_pos(), board)
 
-        drawing.draw()
+        drawing.update()
 
     pygame.quit()
