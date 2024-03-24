@@ -1,5 +1,5 @@
 # Chess
-Multiplayer **Chess** game created using **Python**. It uses **Socket** server to handle connections and game management. **Pygame** is used for UI and game play. It supports independent clients on different machines on different networks.
+Multiplayer **Chess** game created using **Python**. It uses **pygame** for UI and game play with **socket** server to handle connections and game management. It supports independent clients on different machines on different networks.
 
 > If you find any bugs, feel free to create a new **issue** on this repository.
 
