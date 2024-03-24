@@ -13,8 +13,10 @@ def click(mouse_pos, board, padding, tile_size):
         piece = board.board[y][x]
         board.current.dragged = False
 
-        if board.current.first_select or (piece and piece != board.current):
+        if board.current.first_select:
             board.current.first_select = False
+            return
+        elif piece != board.current:
             return
 
     board.reset_selected()
@@ -26,7 +28,7 @@ def drag(mouse_pos, board, padding, tile_size):
     x, y = (mouse_x - pad_x) // tile_size, (mouse_y - pad_y) // tile_size
 
     if not (0 <= x < 8 and 0 <= y < 8):
-        return board.reset_selected()
+        return
 
     piece = board.board[y][x]
 
