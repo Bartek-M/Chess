@@ -5,12 +5,12 @@ from socket import socket, AF_INET, SOCK_STREAM
 
 import dotenv
 
-from player import Player
+from server.player import Player
 
 dotenv.load_dotenv()
 
 HOST = os.getenv("HOST", "127.0.0.1")
-PORT = os.getenv("PORT", 5000)
+PORT = int(os.getenv("PORT", 5000))
 BUFF_SIZE = os.getenv("BUFF_SIZE", 512)
 
 
@@ -50,3 +50,6 @@ class Server:
 
     def handle_disconnect(self):
         pass
+
+if __name__ == "__main__":
+    Server()

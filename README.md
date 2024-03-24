@@ -16,8 +16,8 @@ pip install -r requirements.txt
 
 **Run either server or game:**
 ```bash
-python server
-python game
+python server.py
+python main.py
 ```
 
 ## License

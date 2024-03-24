@@ -1,10 +1,8 @@
-import os
 import random
-
 import pygame
 
-from chess.pieces import Queen
-from utils import generate_board, load_assets
+from public.pieces import Queen
+from public.utils import generate_board, load_assets
 
 
 class Board:

@@ -1,6 +1,6 @@
 import pygame
 
-from utils import is_avail
+from .utils import is_avail
 
 
 class Piece:

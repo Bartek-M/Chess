@@ -1,9 +1,9 @@
 import sys
 import pygame
 
-from drawing import Drawing
-from events import click, drag
-from chess.board import Board
+from game.drawing import Drawing
+from game.events import click, drag
+from public.board import Board
 
 
 pygame.init()
