@@ -3,7 +3,7 @@ import pygame
 
 
 def generate_board(player_color):
-    from pieces import King, Queen, Bishop, Knight, Rook, Pawn
+    from chess.pieces import King, Queen, Bishop, Knight, Rook, Pawn
     board = [[None for _ in range(8)] for _ in range(8)]
 
     for row in [0, 7]:

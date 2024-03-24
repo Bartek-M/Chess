@@ -3,7 +3,7 @@ import random
 
 import pygame
 
-from pieces import Queen
+from chess.pieces import Queen
 from utils import generate_board, load_assets
 
 
