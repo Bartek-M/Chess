@@ -225,12 +225,9 @@ class Pawn(Piece):
         if is_avail(board, (self.col, self.row - 1 * d), self.color) == False:
             moves.append((self.col, self.row - 1 * d))
 
-            if (
-                self.row == 6
-                if board[-1] == self.color
-                else 1
-                and is_avail(board, (self.col, self.row - 2 * d), self.color) == False
-            ):
+            if self.row == (6 if board[-1] == self.color else 1) and is_avail(
+                board, (self.col, self.row - 2 * d), self.color
+            ) == False:
                 moves.append((self.col, self.row - 2 * d))
 
         if is_avail(board, (self.col - 1, self.row - 1 * d), self.color):
