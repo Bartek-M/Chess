@@ -68,7 +68,12 @@ class Board:
         piece.set_pos((x, y))
 
     def reset(self):
-        pass
+        self.color = random.choice(("w", "b"))
+        self.board = generate_board(self.color)
+        self.timers = (600, 600)
+
+        self.current = None
+        self.valid_moves = []
 
     def timer(self):
         time_1, time_2 = self.timers

@@ -26,6 +26,10 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_r:
+                    board.reset()
+
             if event.type == pygame.MOUSEBUTTONUP:
                 click(pygame.mouse.get_pos(), board)
             elif event.type == pygame.MOUSEBUTTONDOWN:
