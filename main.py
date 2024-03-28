@@ -1,47 +1,42 @@
 import sys
 import pygame
 
-from game.drawing import Drawing
-from game.events import click, drag
+from game.drawing import Drawing, MenuDrawing, BoardDrawing
+from game.events import handle_menu, handle_game
 from public.board import Board
 
 pygame.init()
 FPS = 60
 
 
-def welcome():
-    pass
-
-
-def game(clock, fps):
+def main():
     run = True
-    board = Board()
-    drawing = Drawing(board, fps)
+    clock = pygame.time.Clock()
+    pygame.display.set_caption(f"Chess Game")
+
+    drawing = Drawing()
+    start, game = True, False
+    event_handler = lambda: None
 
     while run:
-        clock.tick(FPS)
+        if start:
+            drawing.screen = MenuDrawing(drawing.win)
+            event_handler = lambda: handle_menu(event)
+            start = False
+        elif game:
+            board = Board()
+            drawing.screen = BoardDrawing(drawing.win, board)
+            event_handler = lambda: handle_game(event, board)
+            game = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_r:
-                    board.reset()
-
-            if event.type == pygame.MOUSEBUTTONUP:
-                click(pygame.mouse.get_pos(), board)
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                drag(pygame.mouse.get_pos(), board)
+            event_handler()
 
         drawing.draw()
-
-
-def main():
-    pygame.display.set_caption(f"Chess Game")
-    clock = pygame.time.Clock()
-
-    game(clock, FPS)
+        clock.tick(FPS)
 
     pygame.quit()
     sys.exit(0)

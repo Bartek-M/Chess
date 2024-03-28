@@ -1,7 +1,9 @@
+import pygame
+
 from game.drawing import PAD_X, PAD_Y, TILE_SIZE
 
 
-def click(mouse_pos, board):
+def click_piece(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
     x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
 
@@ -25,7 +27,7 @@ def click(mouse_pos, board):
     board.reset_selected()
 
 
-def drag(mouse_pos, board):
+def drag_piece(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
     x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
 
@@ -48,3 +50,18 @@ def drag(mouse_pos, board):
         piece.first_select = True
 
     piece.dragged = True
+
+
+def handle_game(event, board):
+    if event.type == pygame.KEYUP:
+        if event.key == pygame.K_r:
+            board.reset()
+
+    if event.type == pygame.MOUSEBUTTONUP:
+        click_piece(pygame.mouse.get_pos(), board)
+    elif event.type == pygame.MOUSEBUTTONDOWN:
+        drag_piece(pygame.mouse.get_pos(), board)
+
+
+def handle_menu(event):
+    pass
