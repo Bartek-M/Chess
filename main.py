@@ -1,26 +1,21 @@
 import sys
 import pygame
 
+pygame.init()
+
 from game.drawing import Drawing
 from game.events import click, drag
 from public.board import Board
 
-
-pygame.init()
-
-PAD_X, PAD_Y = (60, 80)  # Dynamic, but suggested (40, 80) as minimum
-WIDTH, HEIGHT = (640 + PAD_X * 2, 640 + PAD_Y * 2 + 20)
-
-TILE_SIZE = (WIDTH - PAD_X * 2) // 8
-FPS = 120
+FPS = 60
 
 
 def main():
     run = True
     clock = pygame.time.Clock()
 
-    board = Board(TILE_SIZE, (PAD_X, PAD_Y), FPS)
-    drawing = Drawing(WIDTH, HEIGHT, (PAD_X, PAD_Y), board)
+    board = Board(FPS)
+    drawing = Drawing(board)
 
     pygame.display.set_caption(f"Chess Game")
 
@@ -32,9 +27,9 @@ def main():
                 run = False
 
             if event.type == pygame.MOUSEBUTTONUP:
-                click(pygame.mouse.get_pos(), board, (PAD_X, PAD_Y), TILE_SIZE)
+                click(pygame.mouse.get_pos(), board)
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                drag(pygame.mouse.get_pos(), board, (PAD_X, PAD_Y), TILE_SIZE)
+                drag(pygame.mouse.get_pos(), board)
 
         drawing.draw()
 

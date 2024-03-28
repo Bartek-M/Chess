@@ -1,7 +1,9 @@
-def click(mouse_pos, board, padding, tile_size):
+from game.drawing import PAD_X, PAD_Y, TILE_SIZE
+
+
+def click(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
-    pad_x, pad_y = padding
-    x, y = (mouse_x - pad_x) // tile_size, (mouse_y - pad_y) // tile_size
+    x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
 
     if not (0 <= x < 8 and 0 <= y < 8):
         return board.reset_selected()
@@ -22,10 +24,9 @@ def click(mouse_pos, board, padding, tile_size):
     board.reset_selected()
 
 
-def drag(mouse_pos, board, padding, tile_size):
+def drag(mouse_pos, board):
     mouse_x, mouse_y = mouse_pos
-    pad_x, pad_y = padding
-    x, y = (mouse_x - pad_x) // tile_size, (mouse_y - pad_y) // tile_size
+    x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
 
     if not (0 <= x < 8 and 0 <= y < 8):
         return
