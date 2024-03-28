@@ -1,23 +1,22 @@
 import sys
 import pygame
 
-pygame.init()
-
 from game.drawing import Drawing
 from game.events import click, drag
 from public.board import Board
 
+pygame.init()
 FPS = 60
 
 
-def main():
+def welcome():
+    pass
+
+
+def game(clock, fps):
     run = True
-    clock = pygame.time.Clock()
-
-    board = Board(FPS)
-    drawing = Drawing(board)
-
-    pygame.display.set_caption(f"Chess Game")
+    board = Board()
+    drawing = Drawing(board, fps)
 
     while run:
         clock.tick(FPS)
@@ -36,6 +35,13 @@ def main():
                 drag(pygame.mouse.get_pos(), board)
 
         drawing.draw()
+
+
+def main():
+    pygame.display.set_caption(f"Chess Game")
+    clock = pygame.time.Clock()
+
+    game(clock, FPS)
 
     pygame.quit()
     sys.exit(0)

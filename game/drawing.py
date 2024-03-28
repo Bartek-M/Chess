@@ -6,6 +6,7 @@ PAD_X, PAD_Y = (60, 80)
 WIDTH, HEIGHT = (640 + PAD_X * 2, 640 + PAD_Y * 2 + 20)
 TILE_SIZE = (WIDTH - PAD_X * 2) // 8
 
+pygame.font.init()
 FONT_M = pygame.font.SysFont("consolas", 18)
 FONT_L = pygame.font.SysFont("consolas", 22)
 
@@ -14,20 +15,34 @@ class Drawing:
     BACKGROUND = 1, 0, 25
     COLOR = 200, 200, 200
 
-    def __init__(self, board):
+    def __init__(self, board, fps):
+        self.fps = fps
         self.window = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.board = BoardDrawing(self.window, board)
+
+        self.board = board
+        self.board_drawing = BoardDrawing(self.window, board)
         self.draw()
 
     def draw(self):
         self.window.fill(self.BACKGROUND)
-        self.board.draw()
+        self.board_drawing.draw()
+        self.board.timer(self.fps)
         pygame.display.update()
 
     @staticmethod
     def draw_text(win, font, text, pos):
         text = font.render(str(text), True, Drawing.COLOR)
         win.blit(text, pos)
+
+
+class WelcomeDrawing:
+    BUTTON_COLOR = 100, 100, 100
+
+    def __init__(self):
+        pass
+
+    def draw(self):
+        pass
 
 
 class BoardDrawing:
@@ -49,7 +64,6 @@ class BoardDrawing:
         self.draw_players()
         self.draw_timers()
         self.draw_board()
-        self.board.timer()
 
     def draw_board(self):
         for i in range(8):
@@ -104,7 +118,9 @@ class BoardDrawing:
         timer_1 = format_time(self.board.timers[0])
         timer_2 = format_time(self.board.timers[1])
         Drawing.draw_text(self.window, FONT_L, timer_1, (WIDTH - PAD_X - 70, 20))
-        Drawing.draw_text(self.window, FONT_L, timer_2, (WIDTH - PAD_X - 70, HEIGHT - 40))
+        Drawing.draw_text(
+            self.window, FONT_L, timer_2, (WIDTH - PAD_X - 70, HEIGHT - 40)
+        )
 
     def draw_cords(self):
         nums = ["8", "7", "6", "5", "4", "3", "2", "1"]

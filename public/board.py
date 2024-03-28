@@ -5,9 +5,7 @@ from public.utils import generate_board
 
 
 class Board:
-    def __init__(self, fps):
-        self.fps = fps
-
+    def __init__(self):
         self.color = random.choice(("w", "b"))
         self.board = generate_board(self.color)
         self.timers = (600, 600)
@@ -51,7 +49,12 @@ class Board:
         if piece.king or piece.rook:
             piece.moved = True
 
-        if piece.king and (new := self.board[y][x]) and new.rook:
+        if (
+            piece.king
+            and (new := self.board[y][x])
+            and new.rook
+            and piece.color == new.color
+        ):
             self.board[y][x] = None
 
             if x > piece.col:
@@ -75,6 +78,6 @@ class Board:
         self.current = None
         self.valid_moves = []
 
-    def timer(self):
+    def timer(self, fps):
         time_1, time_2 = self.timers
-        self.timers = (time_1 - 1 / self.fps, time_2 - 1 / self.fps)
+        self.timers = (time_1 - 1 / fps, time_2 - 1 / fps)
