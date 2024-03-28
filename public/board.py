@@ -13,14 +13,16 @@ class Board:
     GREEN_COLOR = 56, 220, 255
     RED_COLOR = 255, 50, 50
 
-    def __init__(self, tile_size, padding):
+    def __init__(self, tile_size, padding, fps):
         self.tile_size = tile_size
         self.pad_x, self.pad_y = padding
+        self.fps = fps
 
         self.white_assets, self.black_assets = load_assets(self.tile_size)
 
         self.color = random.choice(("w", "b"))
         self.board = generate_board(self.color)
+        self.timers = (600, 600)
 
         self.current = None
         self.valid_moves = []
@@ -95,7 +97,7 @@ class Board:
         self.board[piece.row][piece.col] = None
         self.reset_selected()
 
-        if y == 0 and piece.pawn:
+        if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)
             del piece
             return
@@ -118,6 +120,10 @@ class Board:
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
+
+    def timer(self):
+        time_1, time_2 = self.timers
+        self.timers = (time_1 - 1 / self.fps, time_2 - 1 / self.fps)
 
     def draw_cords(self, win, font):
         nums = ["8", "7", "6", "5", "4", "3", "2", "1"]

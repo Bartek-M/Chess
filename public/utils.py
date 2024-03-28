@@ -10,18 +10,18 @@ def generate_board(player_color):
     for row in [0, 7]:
         if player_color == "w":
             color = "b" if row == 0 else "w"
-            k_pos, q_pos = 4, 3
+            king_col, queen_col = 4, 3
         else:
             color = "b" if row == 7 else "w"
-            k_pos, q_pos = 3, 4
+            king_col, queen_col = 3, 4
 
         pawn_row = row + (-1 if row == 7 else 1)
 
         board[row][0] = Rook(row, 0, color, 4)
         board[row][1] = Knight(row, 1, color, 3)
         board[row][2] = Bishop(row, 2, color, 2)
-        board[row][q_pos] = Queen(row, q_pos, color, 1)
-        board[row][k_pos] = King(row, k_pos, color, 0)
+        board[row][queen_col] = Queen(row, queen_col, color, 1)
+        board[row][king_col] = King(row, king_col, color, 0)
         board[row][5] = Bishop(row, 5, color, 2)
         board[row][6] = Knight(row, 6, color, 3)
         board[row][7] = Rook(row, 7, color, 4)
@@ -29,8 +29,7 @@ def generate_board(player_color):
         for col in range(8):
             board[pawn_row][col] = Pawn(pawn_row, col, color, 5)
 
-        board.append(player_color)
-
+    board.append(player_color)
     return board
 
 
@@ -49,6 +48,21 @@ def is_avail(board, pos, color):
         return None
 
     return piece
+
+
+def format_time(time):
+    time = int(time)
+
+    minute = str(time // 60)
+    second = str(time % 60)
+
+    while len(minute) < 2:
+        minute = "0" + minute
+
+    while len(second) < 2:
+        second = "0" + second
+
+    return f"{minute}:{second}"
 
 
 def load_assets(tile_size):

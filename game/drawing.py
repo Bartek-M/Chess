@@ -1,5 +1,7 @@
 import pygame
 
+from public.utils import format_time
+
 
 class Drawing:
     LIGHT = 226, 226, 226
@@ -16,17 +18,16 @@ class Drawing:
         self.board = board
 
         self.font_m = pygame.font.SysFont("consolas", 18)
-        self.font_l = pygame.font.SysFont("consolas", 24)
+        self.font_l = pygame.font.SysFont("consolas", 22)
         self.draw()
 
     def draw(self):
         self.window.fill(self.BACKGROUND)
-        self.board.draw_cords(self.window, self.font_m)
         self.players()
         self.timers()
-
-    def update(self):
+        self.board.draw_cords(self.window, self.font_m)
         self.board.draw(self.window)
+
         pygame.display.update()
 
     def players(self):
@@ -45,8 +46,10 @@ class Drawing:
         self.window.blit(player_2, (self.pad_x, self.height - 40))
 
     def timers(self):
-        time_1 = self.font_l.render("10:00", True, self.COLOR)
+        time_1 = self.font_l.render(format_time(self.board.timers[0]), True, self.COLOR)
         self.window.blit(time_1, (self.width - self.pad_x - 70, 20))
 
-        time_2 = self.font_l.render("10:00", True, self.COLOR)
+        time_2 = self.font_l.render(format_time(self.board.timers[1]), True, self.COLOR)
         self.window.blit(time_2, (self.width - self.pad_x - 70, self.height - 40))
+
+        self.board.timer()
