@@ -15,7 +15,7 @@ def main():
     pygame.display.set_caption(f"Chess Game")
 
     drawing = Drawing()
-    start, game = True, False
+    start, game = False, True 
     event_handler = lambda: None
 
     while run:

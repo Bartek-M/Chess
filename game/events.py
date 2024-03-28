@@ -15,14 +15,17 @@ def click_piece(mouse_pos, board):
             return board.move(board.current, (x, y))
 
         piece = board.board[y][x]
+
+        if not (piece or board.current.dragged):
+            return board.reset_selected()
+
         board.current.dragged = False
 
-        if piece:
-            if board.current.first_select:
-                board.current.first_select = False
-                return
-            elif piece != board.current:
-                return
+        if board.current.first_select:
+            board.current.first_select = False
+            return
+        elif piece != board.current:
+            return
 
     board.reset_selected()
 
