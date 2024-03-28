@@ -40,7 +40,7 @@ class Drawing:
 
 class MenuDrawing:
     COLOR = 235, 235, 235
-    BUTTON_COLOR = 100, 100, 100
+    BUTTON_COLOR = 100, 150, 150
 
     def __init__(self, win):
         self.win = win
@@ -54,7 +54,13 @@ class MenuDrawing:
         Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 80), self.COLOR, True)
 
     def draw_buttons(self):
-        pass
+        b_width, b_height = 125, 50
+        x = WIDTH // 3 - 25
+        y = HEIGHT // 2 + 100
+
+        pygame.draw.rect(self.win, self.BUTTON_COLOR, (x, y, b_width, b_height), 5, 5)
+        x = WIDTH - b_width - x
+        pygame.draw.rect(self.win, self.BUTTON_COLOR, (x, y, b_width, b_height), 5, 5)
 
 
 class BoardDrawing:

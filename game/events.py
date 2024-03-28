@@ -62,6 +62,8 @@ def handle_game(event, board):
     elif event.type == pygame.MOUSEBUTTONDOWN:
         drag_piece(pygame.mouse.get_pos(), board)
 
+    return False, False
+
 
 def handle_menu(event):
-    pass
+    return False, False

@@ -22,18 +22,16 @@ def main():
         if start:
             drawing.screen = MenuDrawing(drawing.win)
             event_handler = lambda: handle_menu(event)
-            start = False
         elif game:
             board = Board()
             drawing.screen = BoardDrawing(drawing.win, board)
             event_handler = lambda: handle_game(event, board)
-            game = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-            event_handler()
+            start, game = event_handler()
 
         drawing.draw()
         clock.tick(FPS)
