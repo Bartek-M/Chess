@@ -1,18 +1,22 @@
 import sys
+
 import pygame
+import dotenv
 
 from game.drawing import Drawing, MenuDrawing, BoardDrawing
 from game.events import MenuHandler, BoardHandler
 from public.board import Board
 
+dotenv.load_dotenv()
 pygame.init()
-FPS = 60
 
+FPS = 60
+TITLE = "Chess Game"
 
 def main():
     run = True
     clock = pygame.time.Clock()
-    pygame.display.set_caption(f"Chess Game")
+    pygame.display.set_caption(TITLE)
 
     drawing = Drawing()
     screen = "start"
@@ -29,6 +33,8 @@ def main():
                 board = Board()
                 drawing.screen = BoardDrawing(drawing.win, FPS, board)
                 handler = BoardHandler(board)
+            case "game_2":
+                screen = None
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
