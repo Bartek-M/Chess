@@ -9,6 +9,7 @@ class Piece:
     """
 
     SELECT_COLOR = 56, 220, 255
+    DRAGGED_COLOR = 255, 50, 50
 
     def __init__(self, row, col, color, img):
         self.row = row
@@ -34,6 +35,11 @@ class Piece:
 
         if self.dragged:
             x, y = pygame.mouse.get_pos()
+
+            bx = (x - padding[0]) // tile_size * tile_size + padding[0]
+            by = (y - padding[1]) // tile_size * tile_size + padding[1]
+            pygame.draw.rect(win, self.DRAGGED_COLOR, (bx, by, tile_size, tile_size), 5)
+
             x -= tile_size // 2
             y -= tile_size // 2
 
@@ -225,9 +231,10 @@ class Pawn(Piece):
         if is_avail(board, (self.col, self.row - 1 * d), self.color) == False:
             moves.append((self.col, self.row - 1 * d))
 
-            if self.row == (6 if board[-1] == self.color else 1) and is_avail(
-                board, (self.col, self.row - 2 * d), self.color
-            ) == False:
+            if (
+                self.row == (6 if board[-1] == self.color else 1)
+                and is_avail(board, (self.col, self.row - 2 * d), self.color) == False
+            ):
                 moves.append((self.col, self.row - 2 * d))
 
         if is_avail(board, (self.col - 1, self.row - 1 * d), self.color):
