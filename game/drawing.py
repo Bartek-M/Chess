@@ -1,5 +1,6 @@
 import pygame
 
+from game.components import Button
 from public.utils import format_time, load_assets
 
 PAD_X, PAD_Y = 60, 80
@@ -9,7 +10,7 @@ TILE_SIZE = (WIDTH - PAD_X * 2) // 8
 pygame.font.init()
 FONT_M = pygame.font.SysFont("consolas", 18)
 FONT_L = pygame.font.SysFont("consolas", 22)
-FONT_XL = pygame.font.SysFont("arialblack", 50)
+FONT_XL = pygame.font.SysFont("consolas", 60, bold=True)
 
 
 class Drawing:
@@ -40,27 +41,31 @@ class Drawing:
 
 class MenuDrawing:
     COLOR = 235, 235, 235
-    BUTTON_COLOR = 100, 150, 150
 
     def __init__(self, win):
         self.win = win
+        self.buttons = self.setup_buttons()
 
     def draw(self):
         self.draw_title()
         self.draw_buttons()
 
     def draw_title(self):
-        text = "Chess"
+        text = "CHESS"
         Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 80), self.COLOR, True)
 
     def draw_buttons(self):
-        b_width, b_height = 125, 50
-        x = WIDTH // 3 - 25
-        y = HEIGHT // 2 + 100
+        for btn in self.buttons:
+            btn.draw(self.win)
 
-        pygame.draw.rect(self.win, self.BUTTON_COLOR, (x, y, b_width, b_height), 5, 5)
-        x = WIDTH - b_width - x
-        pygame.draw.rect(self.win, self.BUTTON_COLOR, (x, y, b_width, b_height), 5, 5)
+    def setup_buttons(self):
+        width, height = 400, 50
+        x, y = WIDTH // 2 - width // 2, HEIGHT - 200
+
+        return [
+            Button("Local", (x, y), width, height, FONT_L, lambda: "game_1"),
+            Button("Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game_2"),
+        ]
 
 
 class BoardDrawing:

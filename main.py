@@ -1,8 +1,10 @@
+import os
 import sys
+
 import pygame
 
 from game.drawing import Drawing, MenuDrawing, BoardDrawing
-from game.events import handle_menu, handle_game
+from game.events import MenuHandler, BoardHandler
 from public.board import Board
 
 pygame.init()
@@ -15,23 +17,27 @@ def main():
     pygame.display.set_caption(f"Chess Game")
 
     drawing = Drawing()
-    start, game = False, True 
-    event_handler = lambda: None
+    screen = "start"
+    handler = None
 
     while run:
-        if start:
-            drawing.screen = MenuDrawing(drawing.win)
-            event_handler = lambda: handle_menu(event)
-        elif game:
-            board = Board()
-            drawing.screen = BoardDrawing(drawing.win, board)
-            event_handler = lambda: handle_game(event, board)
+        match screen:
+            case "start":
+                screen = None
+                drawing.screen = MenuDrawing(drawing.win)
+                handler = MenuHandler(drawing.screen)
+            case "game_1":
+                screen = None
+                board = Board()
+                drawing.screen = BoardDrawing(drawing.win, board)
+                handler = BoardHandler(board)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
-            start, game = event_handler()
+            if handler:
+                screen = handler.handle(event)
 
         drawing.draw()
         clock.tick(FPS)

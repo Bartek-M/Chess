@@ -3,70 +3,87 @@ import pygame
 from game.drawing import PAD_X, PAD_Y, TILE_SIZE
 
 
-def click_piece(mouse_pos, board):
-    mouse_x, mouse_y = mouse_pos
-    x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
+class BoardHandler:
+    def __init__(self, board):
+        self.board = board
 
-    if not (0 <= x < 8 and 0 <= y < 8):
-        return board.reset_selected()
+    def click(self, mouse_pos):
+        mouse_x, mouse_y = mouse_pos
+        x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
 
-    if board.current:
-        if (x, y) in board.valid_moves:
-            return board.move(board.current, (x, y))
+        if not (0 <= x < 8 and 0 <= y < 8):
+            return self.board.reset_selected()
 
-        piece = board.board[y][x]
+        if self.board.current:
+            if (x, y) in self.board.valid_moves:
+                return self.board.move(self.board.current, (x, y))
 
-        if not (piece or board.current.dragged):
-            return board.reset_selected()
+            piece = self.board.board[y][x]
+            if not (piece or self.board.current.dragged):
+                return self.board.reset_selected()
 
-        board.current.dragged = False
+            self.board.current.dragged = False
 
-        if board.current.first_select:
-            board.current.first_select = False
+            if self.board.current.first_select:
+                self.board.current.first_select = False
+                return
+            elif piece != self.board.current:
+                return
+
+        self.board.reset_selected()
+
+    def drag(self, mouse_pos):
+        mouse_x, mouse_y = mouse_pos
+        x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
+
+        if not (0 <= x < 8 and 0 <= y < 8):
             return
-        elif piece != board.current:
+
+        piece = self.board.board[y][x]
+
+        if not piece or piece.dragged:
             return
 
-    board.reset_selected()
+        if self.board.current and (x, y) in self.board.valid_moves:
+            return self.board.move(self.board.current, (x, y))
+
+        if piece != self.board.current:
+            self.board.reset_selected()
+
+        if not self.board.current:
+            self.board.select(piece)
+            piece.first_select = True
+
+        piece.dragged = True
+
+    def handle(self, event):
+        if event.type == pygame.KEYUP:
+            if event.key == pygame.K_r:
+                self.board.reset()
+
+        if event.type == pygame.MOUSEBUTTONUP:
+            self.click(pygame.mouse.get_pos())
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            self.drag(pygame.mouse.get_pos())
+
+        return None
 
 
-def drag_piece(mouse_pos, board):
-    mouse_x, mouse_y = mouse_pos
-    x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
+class MenuHandler:
+    def __init__(self, drawing):
+        self.drawing = drawing
 
-    if not (0 <= x < 8 and 0 <= y < 8):
-        return
+    def click(self, mouse_pos):
+        for btn in self.drawing.buttons:
+            if not btn.clicked(mouse_pos):
+                continue
 
-    piece = board.board[y][x]
+            return btn.action()
+        
+        return None
 
-    if not piece or piece.dragged:
-        return
+    def handle(self, event):
+        if event.type == pygame.MOUSEBUTTONUP:
+            return self.click(pygame.mouse.get_pos())
 
-    if board.current and (x, y) in board.valid_moves:
-        return board.move(board.current, (x, y))
-
-    if piece != board.current:
-        board.reset_selected()
-
-    if not board.current:
-        board.select(piece)
-        piece.first_select = True
-
-    piece.dragged = True
-
-
-def handle_game(event, board):
-    if event.type == pygame.KEYUP:
-        if event.key == pygame.K_r:
-            board.reset()
-
-    if event.type == pygame.MOUSEBUTTONUP:
-        click_piece(pygame.mouse.get_pos(), board)
-    elif event.type == pygame.MOUSEBUTTONDOWN:
-        drag_piece(pygame.mouse.get_pos(), board)
-
-    return False, False
-
-
-def handle_menu(event):
-    return False, False
+        return None
