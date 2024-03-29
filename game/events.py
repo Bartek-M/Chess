@@ -15,7 +15,7 @@ class BoardHandler:
             return self.board.reset_selected()
 
         if self.board.current:
-            if (x, y) in self.board.valid_moves:
+            if (x, y) in self.board.valid_moves and self.board.current.color == self.board.turn:
                 return self.board.move(self.board.current, (x, y))
 
             piece = self.board.board[y][x]

@@ -1,6 +1,4 @@
-import os
 import sys
-
 import pygame
 
 from game.drawing import Drawing, MenuDrawing, BoardDrawing
@@ -29,7 +27,7 @@ def main():
             case "game_1":
                 screen = None
                 board = Board()
-                drawing.screen = BoardDrawing(drawing.win, board)
+                drawing.screen = BoardDrawing(drawing.win, FPS, board)
                 handler = BoardHandler(board)
 
         for event in pygame.event.get():

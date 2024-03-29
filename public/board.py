@@ -5,9 +5,10 @@ from public.utils import generate_board
 
 
 class Board:
-    def __init__(self):
-        self.color = random.choice(("w", "b"))
+    def __init__(self, color="w"):
+        self.color = color
         self.board = generate_board(self.color)
+        self.turn = "w"
         self.timers = (600, 600)
 
         self.current = None
@@ -22,7 +23,9 @@ class Board:
 
         piece.selected = True
         self.current = piece
-        self.valid_moves = piece.valid_moves(self.board)
+
+        if self.turn == piece.color:
+            self.valid_moves = piece.valid_moves(self.board)
 
     def reset_selected(self):
         if not self.current:
@@ -40,6 +43,7 @@ class Board:
 
         self.board[piece.row][piece.col] = None
         self.reset_selected()
+        self.turn = "b" if self.turn == "w" else "w"
 
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)
@@ -80,4 +84,8 @@ class Board:
 
     def timer(self, fps):
         time_1, time_2 = self.timers
-        self.timers = (time_1 - 1 / fps, time_2 - 1 / fps)
+        self.timers = (
+            (time_1 - 1 / fps, time_2)
+            if self.turn == "w"
+            else (time_1, time_2 - 1 / fps)
+        )

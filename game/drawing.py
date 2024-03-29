@@ -76,8 +76,9 @@ class BoardDrawing:
     GREEN_COLOR = 56, 220, 255
     RED_COLOR = 255, 50, 50
 
-    def __init__(self, win, board):
+    def __init__(self, win, fps, board):
         self.win = win
+        self.fps = fps
         self.board = board
 
         self.white_assets, self.black_assets = load_assets(TILE_SIZE)
@@ -132,16 +133,25 @@ class BoardDrawing:
         pygame.draw.circle(self.win, color, (cx, cy), radius, border)
 
     def draw_players(self):
-        player_1 = f"{'Black' if self.board.color == 'w' else 'White'}: Player 2"
-        player_2 = f"{'White' if self.board.color == 'w' else 'Black'}: Player 1"
+        player_1, player_2 = (
+            (f"Black: Player 2", f"White: Player 1")
+            if self.board.color == "w"
+            else (f"White: Player 2", f"Black: Player 1")
+        )
+
         Drawing.draw_text(self.win, FONT_L, player_1, (PAD_X, 20))
         Drawing.draw_text(self.win, FONT_L, player_2, (PAD_X, HEIGHT - 40))
 
     def draw_timers(self):
-        timer_1 = format_time(self.board.timers[0])
-        timer_2 = format_time(self.board.timers[1])
-        Drawing.draw_text(self.win, FONT_L, timer_1, (WIDTH - PAD_X - 70, 20))
-        Drawing.draw_text(self.win, FONT_L, timer_2, (WIDTH - PAD_X - 70, HEIGHT - 40))
+        timer_1, timer_2 = (
+            (format_time(self.board.timers[0]), format_time(self.board.timers[1]))
+            if self.board.color == "w"
+            else (format_time(self.board.timers[1]), format_time(self.board.timers[0]))
+        )
+
+        Drawing.draw_text(self.win, FONT_L, timer_2, (WIDTH - PAD_X - 70, 20))
+        Drawing.draw_text(self.win, FONT_L, timer_1, (WIDTH - PAD_X - 70, HEIGHT - 40))
+        self.board.timer(self.fps)
 
     def draw_cords(self):
         nums = ["8", "7", "6", "5", "4", "3", "2", "1"]
