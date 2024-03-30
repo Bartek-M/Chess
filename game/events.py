@@ -1,6 +1,6 @@
 import pygame
 
-from game.components import Button
+from game.components import Button, TextInput
 from game.drawing import PAD_X, PAD_Y, TILE_SIZE
 
 
@@ -89,8 +89,27 @@ class MenuHandler:
 
         return None
 
+    def typing(self, text_input, key=None, backspace=False):
+        if backspace:
+            return text_input.backspace()
+
+        if len(text_input.text) >= text_input.max_size:
+            return
+
+        text_input.text += key
+
     def handle(self, event):
         if event.type == pygame.MOUSEBUTTONUP:
             return self.click(pygame.mouse.get_pos())
+
+        if event.type == pygame.KEYDOWN:
+            for item in self.drawing.components:
+                if type(item) is not TextInput or not item.active:
+                    continue
+
+                if event.key == pygame.K_BACKSPACE:
+                    self.typing(item, backspace=True)
+                else:
+                    self.typing(item, key=event.unicode)
 
         return None

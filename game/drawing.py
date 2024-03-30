@@ -10,7 +10,7 @@ TILE_SIZE = (WIDTH - PAD_X * 2) // 8
 pygame.font.init()
 FONT_M = pygame.font.SysFont("consolas", 18)
 FONT_L = pygame.font.SysFont("consolas", 22)
-FONT_XL = pygame.font.SysFont("consolas", 60, bold=True)
+FONT_XL = pygame.font.SysFont("consolas", 72, bold=True)
 
 
 class Drawing:
@@ -52,7 +52,7 @@ class MenuDrawing:
 
     def draw_title(self):
         text = "CHESS"
-        Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 80), self.COLOR, True)
+        Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 100), self.COLOR, True)
 
     def draw_components(self):
         for item in self.components:
@@ -63,8 +63,8 @@ class MenuDrawing:
         x, y = WIDTH // 2 - width // 2, HEIGHT // 2 - 100
 
         return [
-            TextInput("Name: ", (x, y), width, height, FONT_L),
-            TextInput("Code: ", (x, y := y + 75), width, height, FONT_L),
+            TextInput("Player", "Name:", (x, y), width, height, FONT_L),
+            TextInput("1234", "Code:", (x, y := y + 75), width, height, FONT_L),
             Button("Local", (x, y := y + 200), width, height, FONT_L, lambda: "game_1"),
             Button("Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game_2"),
         ]
