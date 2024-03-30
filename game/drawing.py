@@ -90,6 +90,8 @@ class BoardDrawing:
         self.draw_board()
 
     def draw_board(self):
+        current = self.board.current
+
         for i in range(8):
             for j in range(8):
                 color = self.LIGHT_COLOR if (i + j) % 2 == 0 else self.DARK_COLOR
@@ -99,7 +101,7 @@ class BoardDrawing:
                 pygame.draw.rect(self.win, color, (x, y, TILE_SIZE, TILE_SIZE))
                 piece = self.board.board[i][j]
 
-                if (j, i) in self.board.valid_moves:
+                if current and (j, i) in current.valid_moves:
                     self.draw_valid_moves(x, y, piece)
 
                 if piece is None or piece.dragged:
@@ -107,8 +109,8 @@ class BoardDrawing:
 
                 self.draw_piece(piece)
 
-        if self.board.current and self.board.current.dragged:
-            self.draw_piece(self.board.current)
+        if current and current.dragged:
+            self.draw_piece(current)
 
     def draw_piece(self, piece):
         assets = self.black_assets if piece.color == "b" else self.white_assets

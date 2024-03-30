@@ -8,11 +8,10 @@ class Board:
     def __init__(self, color="w"):
         self.color = color
         self.board = generate_board(self.color)
+
         self.turn = "w"
         self.timers = (600, 600)
-
         self.current = None
-        self.valid_moves = []
 
     def select(self, piece):
         if self.current:
@@ -25,7 +24,7 @@ class Board:
         self.current = piece
 
         if self.turn == piece.color:
-            self.valid_moves = piece.valid_moves(self.board)
+            piece.valid_moves = piece.get_moves(self.board)
 
     def reset_selected(self):
         if not self.current:
@@ -35,11 +34,17 @@ class Board:
         self.current.first_select = False
         self.current.dragged = False
 
+        self.current.valid_moves = [None]
         self.current = None
-        self.valid_moves = []
 
     def move(self, piece, pos):
         x, y = pos
+
+        if None in piece.valid_moves:
+            piece.valid_moves = piece.get_moves(self.board)
+
+        if pos not in piece.valid_moves:
+            return
 
         self.board[piece.row][piece.col] = None
         self.reset_selected()

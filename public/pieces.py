@@ -21,6 +21,7 @@ class Piece:
         self.selected = False
         self.first_select = False
         self.dragged = False
+        self.valid_moves = [None]
 
         self.king = False
         self.rook = False
@@ -36,9 +37,15 @@ class Piece:
         if self.dragged:
             x, y = pygame.mouse.get_pos()
 
-            bx = (x - padding[0]) // tile_size * tile_size + padding[0]
-            by = (y - padding[1]) // tile_size * tile_size + padding[1]
-            pygame.draw.rect(win, self.DRAGGED_COLOR, (bx, by, tile_size, tile_size), 5)
+            if (
+                0 <= (x - padding[0]) // tile_size < 8
+                and 0 <= (y - padding[1]) // tile_size < 8
+            ):
+                bx = (x - padding[0]) // tile_size * tile_size + padding[0]
+                by = (y - padding[1]) // tile_size * tile_size + padding[1]
+                pygame.draw.rect(
+                    win, self.DRAGGED_COLOR, (bx, by, tile_size, tile_size), 5
+                )
 
             x -= tile_size // 2
             y -= tile_size // 2
@@ -55,7 +62,7 @@ class King(Piece):
         self.king = True
         self.moved = False
 
-    def valid_moves(self, board):
+    def get_moves(self, board):
         moves = []
 
         for dx in [-1, 0, 1]:
@@ -73,7 +80,7 @@ class King(Piece):
         if not self.moved:
             moves += self.check_castle(board)
 
-        return moves
+        return moves if moves else [None]
 
     def check_castle(self, board):
         moves = []
@@ -98,14 +105,14 @@ class King(Piece):
 
                 break
 
-        return moves
+        return moves if moves else [None]
 
     def __repr__(self):
         return f"king {self.color} at [{self.row}; {self.col}]"
 
 
 class Queen(Piece):
-    def valid_moves(self, board):
+    def get_moves(self, board):
         moves = []
 
         # X / Y
@@ -138,14 +145,14 @@ class Queen(Piece):
                 if avail:
                     break
 
-        return moves
+        return moves if moves else [None]
 
     def __repr__(self):
         return f"queen {self.color} at [{self.row}; {self.col}]"
 
 
 class Bishop(Piece):
-    def valid_moves(self, board):
+    def get_moves(self, board):
         moves = []
 
         for dx, dy in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
@@ -162,14 +169,14 @@ class Bishop(Piece):
                 if avail:
                     break
 
-        return moves
+        return moves if moves else [None]
 
     def __repr__(self):
         return f"bishop {self.color} at [{self.row}; {self.col}]"
 
 
 class Knight(Piece):
-    def valid_moves(self, board):
+    def get_moves(self, board):
         moves = []
 
         for dx in [-2, -1, 1, 2]:
@@ -184,7 +191,7 @@ class Knight(Piece):
                 if avail is not None:
                     moves.append((x, y))
 
-        return moves
+        return moves if moves else [None]
 
     def __repr__(self):
         return f"knight {self.color} at [{self.row}; {self.col}]"
@@ -196,7 +203,7 @@ class Rook(Piece):
         self.rook = True
         self.moved = False
 
-    def valid_moves(self, board):
+    def get_moves(self, board):
         moves = []
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
@@ -213,7 +220,7 @@ class Rook(Piece):
                 if avail:
                     break
 
-        return moves
+        return moves if moves else [None]
 
     def __repr__(self):
         return f"rook {self.color} at [{self.row}; {self.col}]"
@@ -224,7 +231,7 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         self.pawn = True
 
-    def valid_moves(self, board):
+    def get_moves(self, board):
         moves = []
         d = 1 if board[-1] == self.color else -1
 
@@ -243,7 +250,7 @@ class Pawn(Piece):
         if is_avail(board, (self.col + 1, self.row - 1 * d), self.color):
             moves.append((self.col + 1, self.row - 1 * d))
 
-        return moves
+        return moves if moves else [None]
 
     def __repr__(self):
         return f"pawn {self.color} at [{self.row}; {self.col}]"

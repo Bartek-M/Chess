@@ -14,20 +14,21 @@ class BoardHandler:
         if not (0 <= x < 8 and 0 <= y < 8):
             return self.board.reset_selected()
 
-        if self.board.current:
-            if (x, y) in self.board.valid_moves and self.board.current.color == self.board.turn:
+        current = self.board.current
+        if current:
+            if (x, y) in current.valid_moves and current.color == self.board.turn:
                 return self.board.move(self.board.current, (x, y))
 
             piece = self.board.board[y][x]
-            if not (piece or self.board.current.dragged):
+            if not (piece or current.dragged):
                 return self.board.reset_selected()
 
-            self.board.current.dragged = False
+            current.dragged = False
 
-            if self.board.current.first_select:
-                self.board.current.first_select = False
+            if current.first_select:
+                current.first_select = False
                 return
-            elif piece != self.board.current:
+            elif piece != current:
                 return
 
         self.board.reset_selected()
@@ -39,15 +40,16 @@ class BoardHandler:
         if not (0 <= x < 8 and 0 <= y < 8):
             return
 
+        current = self.board.current
         piece = self.board.board[y][x]
 
         if not piece or piece.dragged:
             return
 
-        if self.board.current and (x, y) in self.board.valid_moves:
-            return self.board.move(self.board.current, (x, y))
+        if current and (x, y) in current.valid_moves:
+            return self.board.move(current, (x, y))
 
-        if piece != self.board.current:
+        if piece != current:
             self.board.reset_selected()
 
         if not self.board.current:
@@ -79,7 +81,7 @@ class MenuHandler:
                 continue
 
             return btn.action()
-        
+
         return None
 
     def handle(self, event):
