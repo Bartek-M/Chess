@@ -3,9 +3,10 @@ from public.utils import generate_board
 
 
 class Board:
-    def __init__(self, color="w"):
+    def __init__(self, color="w", client=None):
         self.color = color
         self.board = generate_board(self.color)
+        self.client = client
 
         self.turn = "w"
         self.timers = (600, 600)
@@ -87,6 +88,7 @@ class Board:
         self.board = generate_board(self.color)
         self.timers = (600, 600)
         self.turn = "w"
+        self.paused = False
         self.current = None
 
     def timer(self, fps):

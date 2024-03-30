@@ -1,5 +1,5 @@
 from threading import Thread
-from datetime import datetime
+from datetime import datetime, UTC
 from socket import socket, AF_INET, SOCK_STREAM
 
 from server.player import Player
@@ -7,6 +7,7 @@ from server.player import Player
 
 class Server:
     players = []
+    games = {}
 
     def __init__(self, host, port):
         self.server = socket(AF_INET, SOCK_STREAM)
@@ -31,7 +32,7 @@ class Server:
                 player = Player(addr, client)
                 self.players.append(player)
 
-                print(f"[CONNECTION] {addr} connected at {datetime.now(datetime.UTC)}")
+                print(f"[CONNECTION] {addr} connected at {datetime.now(UTC)}")
                 Thread(target=None, args=(player,)).start()
             except Exception as e:
                 print("[ERROR]", e)

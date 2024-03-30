@@ -5,6 +5,7 @@ import dotenv
 
 from game.drawing import Drawing, MenuDrawing, BoardDrawing
 from game.events import MenuHandler, BoardHandler
+from game.client import Client
 from public.board import Board
 
 dotenv.load_dotenv()
@@ -31,21 +32,21 @@ def main():
             if handler:
                 screen = handler.handle(event)
 
-        match screen:
-            case "start":
-                screen = None
-                drawing.screen = MenuDrawing(drawing.win)
-                handler = MenuHandler(drawing.screen)
-            case "game_1":
-                screen = None
-                board = Board()
-                drawing.screen = BoardDrawing(drawing.win, FPS, board)
-                handler = BoardHandler(board)
-            case "game_2":
-                screen = None
+        if screen == "start":
+            drawing.screen = MenuDrawing(drawing.win)
+            handler = MenuHandler(drawing.screen)
+        elif screen == "game-1":
+            board = Board()
+        elif screen == "game-2":
+            board = Board(client=Client())
+
+        if screen in ["game-1", "game-2"]:
+            drawing.screen = BoardDrawing(drawing.win, FPS, board)
+            handler = BoardHandler(board)
 
         drawing.draw()
         clock.tick(FPS)
+        screen = None
 
     pygame.quit()
     sys.exit(0)

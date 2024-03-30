@@ -95,6 +95,9 @@ class MenuHandler:
 
         if len(text_input.text) >= text_input.max_size:
             return
+        
+        if not key.isalnum() and key != " ":
+            return
 
         text_input.text += key
 

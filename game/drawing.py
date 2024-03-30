@@ -20,6 +20,7 @@ class Drawing:
     def __init__(self, screen=None):
         self.win = pygame.display.set_mode((WIDTH, HEIGHT))
         self.screen = screen
+        self.cards = []
         self.draw()
 
     def draw(self):
@@ -28,7 +29,12 @@ class Drawing:
         if self.screen:
             self.screen.draw()
 
+        self.draw_cards()
         pygame.display.update()
+
+    def draw_cards(self):
+        for card in self.cards:
+            card.draw()
 
     @staticmethod
     def draw_text(win, font, text, pos, color=None, center=False):
@@ -65,8 +71,8 @@ class MenuDrawing:
         return [
             TextInput("Player", "Name:", (x, y), width, height, FONT_L),
             TextInput("1234", "Code:", (x, y := y + 75), width, height, FONT_L),
-            Button("Local", (x, y := y + 200), width, height, FONT_L, lambda: "game_1"),
-            Button("Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game_2"),
+            Button("Local", (x, y := y + 200), width, height, FONT_L, lambda: "game-1"),
+            Button("Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game-2"),
         ]
 
 

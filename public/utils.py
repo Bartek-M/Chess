@@ -52,6 +52,11 @@ def is_avail(board, pos, color):
     return piece
 
 
+def translate_pos(pos):
+    x, y = pos
+    return (x * -1 - 1, y * -1 - 1)
+
+
 def format_time(time):
     time = round(time)
 
