@@ -9,6 +9,7 @@ class Board:
 
         self.turn = "w"
         self.timers = (600, 600)
+        self.paused = False
         self.current = None
 
     def select(self, piece):
@@ -36,7 +37,8 @@ class Board:
         self.current = None
 
     def move(self, piece, pos):
-        x, y = pos
+        if self.paused:
+            return self.reset_selected()
 
         if None in piece.valid_moves:
             piece.valid_moves = piece.get_moves(self.board)
@@ -44,9 +46,10 @@ class Board:
         if pos not in piece.valid_moves:
             return
 
+        x, y = pos
         self.board[piece.row][piece.col] = None
-        self.reset_selected()
         self.turn = "b" if self.turn == "w" else "w"
+        self.reset_selected()
 
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)
@@ -77,6 +80,9 @@ class Board:
         self.board[y][x] = piece
         piece.set_pos((x, y))
 
+    def pause(self):
+        self.paused = not self.paused
+
     def reset(self):
         self.board = generate_board(self.color)
         self.timers = (600, 600)
@@ -84,6 +90,9 @@ class Board:
         self.current = None
 
     def timer(self, fps):
+        if self.paused:
+            return
+
         time_1, time_2 = self.timers
         self.timers = (
             (time_1 - 1 / fps, time_2)

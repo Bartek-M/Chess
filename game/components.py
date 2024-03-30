@@ -2,10 +2,21 @@ import pygame
 
 
 class Button:
+    BG_COLOR = 56, 73, 99
     FG_COLOR = 235, 235, 235
-    BG_COLOR = 91, 96, 104
 
-    def __init__(self, text, pos, width, height, font, action=lambda: None, colors=None, border=0, radius=5):
+    def __init__(
+        self,
+        text,
+        pos,
+        width,
+        height,
+        font,
+        action=lambda: None,
+        colors=None,
+        border=0,
+        radius=5,
+    ):
         self.colors = colors if colors else (self.BG_COLOR, self.FG_COLOR)
         self.text = font.render(str(text), True, self.colors[1])
 
@@ -24,3 +35,35 @@ class Button:
 
     def clicked(self, pos):
         return self.rect.collidepoint(pos)
+
+
+class TextInput:
+    BG_COLOR = 56, 73, 99
+    ACTIVE_COLOR = 56, 173, 199
+    FG_COLOR = 235, 235, 235
+
+    def __init__(self, text, pos, width, height, font, border=5, radius=5):
+        self.text = str(text)
+        self.font = font
+
+        x, y = pos
+        self.rect = pygame.Rect(x, y, width, height)
+        self.text_pos = (x + 12, y + height // 2 - 11)
+        self.active = False
+
+        self.border = border
+        self.radius = radius
+
+    def draw(self, win):
+        color = self.ACTIVE_COLOR if self.active else self.BG_COLOR
+        pygame.draw.rect(win, color, self.rect, self.border, self.radius)
+
+        text = self.font.render(self.text, True, self.FG_COLOR)
+        win.blit(text, self.text_pos)
+
+    def clicked(self, pos):
+        self.active = False
+        return self.rect.collidepoint(pos)
+
+    def action(self):
+        self.active = not self.active

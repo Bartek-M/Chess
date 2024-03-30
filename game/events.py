@@ -1,5 +1,6 @@
 import pygame
 
+from game.components import Button
 from game.drawing import PAD_X, PAD_Y, TILE_SIZE
 
 
@@ -62,6 +63,8 @@ class BoardHandler:
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_r:
                 self.board.reset()
+            elif event.key == pygame.K_p:
+                self.board.pause()
 
         if event.type == pygame.MOUSEBUTTONUP:
             self.click(pygame.mouse.get_pos())
@@ -76,11 +79,13 @@ class MenuHandler:
         self.drawing = drawing
 
     def click(self, mouse_pos):
-        for btn in self.drawing.buttons:
-            if not btn.clicked(mouse_pos):
+        for item in self.drawing.components:
+            if not item.clicked(mouse_pos):
                 continue
 
-            return btn.action()
+            action = item.action()
+            if type(item) is Button:
+                return action
 
         return None
 

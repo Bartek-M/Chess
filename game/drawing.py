@@ -1,9 +1,9 @@
 import pygame
 
-from game.components import Button
+from game.components import Button, TextInput
 from public.utils import format_time, load_assets
 
-PAD_X, PAD_Y = 60, 80
+PAD_X, PAD_Y = 60, 90
 WIDTH, HEIGHT = 640 + PAD_X * 2, 640 + PAD_Y * 2 + 20
 TILE_SIZE = (WIDTH - PAD_X * 2) // 8
 
@@ -44,26 +44,28 @@ class MenuDrawing:
 
     def __init__(self, win):
         self.win = win
-        self.buttons = self.setup_buttons()
+        self.components = self.setup_components()
 
     def draw(self):
         self.draw_title()
-        self.draw_buttons()
+        self.draw_components()
 
     def draw_title(self):
         text = "CHESS"
         Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 80), self.COLOR, True)
 
-    def draw_buttons(self):
-        for btn in self.buttons:
-            btn.draw(self.win)
+    def draw_components(self):
+        for item in self.components:
+            item.draw(self.win)
 
-    def setup_buttons(self):
+    def setup_components(self):
         width, height = 400, 50
-        x, y = WIDTH // 2 - width // 2, HEIGHT - 200
+        x, y = WIDTH // 2 - width // 2, HEIGHT // 2 - 100
 
         return [
-            Button("Local", (x, y), width, height, FONT_L, lambda: "game_1"),
+            TextInput("Name: ", (x, y), width, height, FONT_L),
+            TextInput("Code: ", (x, y := y + 75), width, height, FONT_L),
+            Button("Local", (x, y := y + 200), width, height, FONT_L, lambda: "game_1"),
             Button("Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game_2"),
         ]
 
@@ -136,21 +138,24 @@ class BoardDrawing:
 
     def draw_players(self):
         turn_color = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
+        if self.board.paused:
+            turn_color += " [Paused]"
+
         if self.board.color == "w":
             player_1, player_2 = "Black: Player 2", "White: Player 1"
         else:
             player_1, player_2 = "White: Player 2", "Black: Player 1"
 
-        Drawing.draw_text(self.win, FONT_L, turn_color, (WIDTH // 2, 60), center=True)
+        Drawing.draw_text(self.win, FONT_L, turn_color, (WIDTH // 2, 70), center=True)
         Drawing.draw_text(self.win, FONT_L, player_1, (PAD_X, 20))
         Drawing.draw_text(self.win, FONT_L, player_2, (PAD_X, HEIGHT - 40))
 
     def draw_timers(self):
-        timer_1, timer_2 = (
-            (format_time(self.board.timers[0]), format_time(self.board.timers[1]))
-            if self.board.color == "w"
-            else (format_time(self.board.timers[1]), format_time(self.board.timers[0]))
-        )
+        timer_1, timer_2 = self.board.timers
+        if self.board.color == "w":
+            timer_1, timer_2 = format_time(timer_1), format_time(timer_2)
+        else:
+            timer_1, timer_2 = format_time(timer_2), format_time(timer_2)
 
         Drawing.draw_text(self.win, FONT_L, timer_2, (WIDTH - PAD_X - 70, 20))
         Drawing.draw_text(self.win, FONT_L, timer_1, (WIDTH - PAD_X - 70, HEIGHT - 40))

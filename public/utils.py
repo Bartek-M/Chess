@@ -1,4 +1,6 @@
 import os
+import sys
+
 import pygame
 
 
@@ -51,7 +53,7 @@ def is_avail(board, pos, color):
 
 
 def format_time(time):
-    time = int(time)
+    time = round(time)
 
     minute = str(time // 60)
     second = str(time % 60)
