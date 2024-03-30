@@ -1,5 +1,3 @@
-import random
-
 from public.pieces import Queen
 from public.utils import generate_board
 
@@ -80,12 +78,10 @@ class Board:
         piece.set_pos((x, y))
 
     def reset(self):
-        self.color = random.choice(("w", "b"))
         self.board = generate_board(self.color)
         self.timers = (600, 600)
-
+        self.turn = "w"
         self.current = None
-        self.valid_moves = []
 
     def timer(self, fps):
         time_1, time_2 = self.timers

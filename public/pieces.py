@@ -9,7 +9,7 @@ class Piece:
     """
 
     SELECT_COLOR = 56, 220, 255
-    DRAGGED_COLOR = 255, 50, 50
+    DRAG_COLOR = 255, 50, 50
 
     def __init__(self, row, col, color, img):
         self.row = row
@@ -36,16 +36,12 @@ class Piece:
 
         if self.dragged:
             x, y = pygame.mouse.get_pos()
+            bx, by = (x - padding[0]) // tile_size, (y - padding[1]) // tile_size
 
-            if (
-                0 <= (x - padding[0]) // tile_size < 8
-                and 0 <= (y - padding[1]) // tile_size < 8
-            ):
-                bx = (x - padding[0]) // tile_size * tile_size + padding[0]
-                by = (y - padding[1]) // tile_size * tile_size + padding[1]
-                pygame.draw.rect(
-                    win, self.DRAGGED_COLOR, (bx, by, tile_size, tile_size), 5
-                )
+            if 0 <= bx < 8 and 0 <= by < 8:
+                bx = bx * tile_size + padding[0]
+                by = by * tile_size + padding[1]
+                pygame.draw.rect(win, self.DRAG_COLOR, (bx, by, tile_size, tile_size), 5)
 
             x -= tile_size // 2
             y -= tile_size // 2
