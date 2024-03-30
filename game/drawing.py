@@ -73,7 +73,7 @@ class BoardDrawing:
     DARK_COLOR = 116, 116, 116
 
     GRAY_COLOR = 200, 200, 200
-    GREEN_COLOR = 56, 220, 255
+    CYAN_COLOR = 56, 220, 255
     RED_COLOR = 255, 50, 50
 
     def __init__(self, win, fps, board):
@@ -125,7 +125,7 @@ class BoardDrawing:
             color = (
                 self.RED_COLOR
                 if piece.color != self.board.current.color
-                else self.GREEN_COLOR
+                else self.CYAN_COLOR
             )
             radius = TILE_SIZE * 0.4
             border = 5
@@ -135,12 +135,13 @@ class BoardDrawing:
         pygame.draw.circle(self.win, color, (cx, cy), radius, border)
 
     def draw_players(self):
-        player_1, player_2 = (
-            (f"Black: Player 2", f"White: Player 1")
-            if self.board.color == "w"
-            else (f"White: Player 2", f"Black: Player 1")
-        )
+        turn_color = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
+        if self.board.color == "w":
+            player_1, player_2 = "Black: Player 2", "White: Player 1"
+        else:
+            player_1, player_2 = "White: Player 2", "Black: Player 1"
 
+        Drawing.draw_text(self.win, FONT_L, turn_color, (WIDTH // 2, 60), center=True)
         Drawing.draw_text(self.win, FONT_L, player_1, (PAD_X, 20))
         Drawing.draw_text(self.win, FONT_L, player_2, (PAD_X, HEIGHT - 40))
 

@@ -13,6 +13,7 @@ pygame.init()
 FPS = 60
 TITLE = "Chess Game"
 
+
 def main():
     run = True
     clock = pygame.time.Clock()
@@ -23,6 +24,13 @@ def main():
     handler = None
 
     while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                run = False
+
+            if handler:
+                screen = handler.handle(event)
+
         match screen:
             case "start":
                 screen = None
@@ -35,13 +43,6 @@ def main():
                 handler = BoardHandler(board)
             case "game_2":
                 screen = None
-
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                run = False
-
-            if handler:
-                screen = handler.handle(event)
 
         drawing.draw()
         clock.tick(FPS)
