@@ -29,6 +29,9 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
 
+            if drawing.cards:
+                break    
+
             if handler:
                 screen = handler.handle(event)
 
@@ -38,6 +41,8 @@ def main():
         elif screen == "game-1":
             board = Board()
         elif screen == "game-2":
+            print(drawing.screen.components.get("name-inpt").text)
+            print(drawing.screen.components.get("code-inpt").text)
             board = Board(client=Client())
 
         if screen in ["game-1", "game-2"]:

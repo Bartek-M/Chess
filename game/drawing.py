@@ -61,19 +61,25 @@ class MenuDrawing:
         Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 100), self.COLOR, True)
 
     def draw_components(self):
-        for item in self.components:
+        for item in self.components.values():
             item.draw(self.win)
 
     def setup_components(self):
         width, height = 400, 50
         x, y = WIDTH // 2 - width // 2, HEIGHT // 2 - 100
 
-        return [
-            TextInput("Player", "Name:", (x, y), width, height, FONT_L),
-            TextInput("1234", "Code:", (x, y := y + 75), width, height, FONT_L),
-            Button("Local", (x, y := y + 200), width, height, FONT_L, lambda: "game-1"),
-            Button("Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game-2"),
-        ]
+        return {
+            "name-inpt": TextInput("Player", "Name:", (x, y), width, height, FONT_L),
+            "code-inpt": TextInput(
+                "1234", "Code:", (x, y := y + 75), width, height, FONT_L
+            ),
+            "local-btn": Button(
+                "Local", (x, y := y + 200), width, height, FONT_L, lambda: "game-1"
+            ),
+            "multiplayer-btn": Button(
+                "Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game-2"
+            ),
+        }
 
 
 class BoardDrawing:

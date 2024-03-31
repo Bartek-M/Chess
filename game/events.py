@@ -79,7 +79,7 @@ class MenuHandler:
         self.drawing = drawing
 
     def click(self, mouse_pos):
-        for item in self.drawing.components:
+        for item in self.drawing.components.values():
             if not item.clicked(mouse_pos):
                 continue
 
@@ -106,7 +106,7 @@ class MenuHandler:
             return self.click(pygame.mouse.get_pos())
 
         if event.type == pygame.KEYDOWN:
-            for item in self.drawing.components:
+            for item in self.drawing.components.values():
                 if type(item) is not TextInput or not item.active:
                     continue
 
