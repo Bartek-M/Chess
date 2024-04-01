@@ -47,18 +47,28 @@ class Drawing:
 
 class MenuDrawing:
     COLOR = 235, 235, 235
+    RED = 235, 75, 75
 
-    def __init__(self, win):
+    def __init__(self, win, info=None):
         self.win = win
+        self.info = info
         self.components = self.setup_components()
 
     def draw(self):
         self.draw_title()
+        self.draw_info()
         self.draw_components()
 
     def draw_title(self):
         text = "CHESS"
         Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 100), self.COLOR, True)
+
+    def draw_info(self):
+        if not self.info:
+            return
+
+        pos = (WIDTH // 2, HEIGHT - 50)
+        Drawing.draw_text(self.win, FONT_L, self.info, pos, self.RED, True)
 
     def draw_components(self):
         for item in self.components.values():
@@ -81,18 +91,18 @@ class MenuDrawing:
             ),
         }
 
-    def get_input(self, name):
+    def get_input(self, name, alt=None):
         inpt = self.components.get(name)
-        return inpt.text if inpt else None
+        return inpt.text if inpt else alt
 
 
 class BoardDrawing:
-    LIGHT_COLOR = 238, 238, 238
-    DARK_COLOR = 116, 116, 116
+    LIGHT = 238, 238, 238
+    DARK = 116, 116, 116
 
-    GRAY_COLOR = 200, 200, 200
-    CYAN_COLOR = 56, 220, 255
-    RED_COLOR = 255, 50, 50
+    GRAY = 200, 200, 200
+    CYAN = 56, 220, 255
+    RED = 255, 50, 50
 
     def __init__(self, win, fps, board):
         self.win = win
@@ -112,7 +122,7 @@ class BoardDrawing:
 
         for i in range(8):
             for j in range(8):
-                color = self.LIGHT_COLOR if (i + j) % 2 == 0 else self.DARK_COLOR
+                color = self.LIGHT if (i + j) % 2 == 0 else self.DARK
                 x = PAD_X + j * TILE_SIZE
                 y = PAD_Y + i * TILE_SIZE
 
@@ -136,15 +146,11 @@ class BoardDrawing:
 
     def draw_valid_moves(self, x, y, piece):
         if piece is None:
-            color = self.GRAY_COLOR
+            color = self.GRAY
             radius = 12
             border = 0
         else:
-            color = (
-                self.RED_COLOR
-                if piece.color != self.board.current.color
-                else self.CYAN_COLOR
-            )
+            color = self.RED if piece.color != self.board.current.color else self.CYAN
             radius = TILE_SIZE * 0.4
             border = 5
 
@@ -153,16 +159,16 @@ class BoardDrawing:
         pygame.draw.circle(self.win, color, (cx, cy), radius, border)
 
     def draw_players(self):
-        turn_color = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
+        turn = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
         if self.board.paused:
-            turn_color += " [Paused]"
+            turn += " [Paused]"
 
         if self.board.color == "w":
             player_1, player_2 = "Black: Player 2", "White: Player 1"
         else:
             player_1, player_2 = "White: Player 2", "Black: Player 1"
 
-        Drawing.draw_text(self.win, FONT_L, turn_color, (WIDTH // 2, 70), center=True)
+        Drawing.draw_text(self.win, FONT_L, turn, (WIDTH // 2, 70), center=True)
         Drawing.draw_text(self.win, FONT_L, player_1, (PAD_X, 20))
         Drawing.draw_text(self.win, FONT_L, player_2, (PAD_X, HEIGHT - 40))
 

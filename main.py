@@ -22,26 +22,35 @@ def main():
 
     drawing = Drawing()
     screen = "start"
+    info = "[ERROR] Couldn't connect to the server"
     handler = None
 
     while run:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
+                break
             if handler:
                 screen = handler.handle(event)
 
-        if screen == "start":
-            drawing.screen = MenuDrawing(drawing.win)
-            handler = MenuHandler(drawing.screen)
-        elif screen == "game-1":
+        if screen == "game-1":
             board = Board()
         elif screen == "game-2":
-            print(drawing.screen.get_input("name-inpt"))
-            print(drawing.screen.get_input("code-inpt"))
-            board = Board(client=Client())
+            name = drawing.screen.get_input("name-inpt", "Player")
+            code = drawing.screen.get_input("code-inpt")
 
-        if screen in ["game-1", "game-2"]:
+            try:
+                Client(name, code)
+            except:
+                info = "[ERROR] Couldn't connect to the server"
+                screen = "start"
+
+        if screen:
+            del drawing.screen
+        if screen == "start":
+            drawing.screen = MenuDrawing(drawing.win, info)
+            handler = MenuHandler(drawing.screen)
+        elif screen in ["game-1", "game-2"]:
             drawing.screen = BoardDrawing(drawing.win, FPS, board)
             handler = BoardHandler(board)
 
