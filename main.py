@@ -22,7 +22,7 @@ def main():
 
     drawing = Drawing()
     screen = "start"
-    info = "[ERROR] Couldn't connect to the server"
+    info = None
     handler = None
 
     while run:
@@ -40,7 +40,8 @@ def main():
             code = drawing.screen.get_input("code-inpt")
 
             try:
-                Client(name, code)
+                board = Board()
+                Client(board, name, code)
             except:
                 info = "[ERROR] Couldn't connect to the server"
                 screen = "start"

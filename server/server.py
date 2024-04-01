@@ -1,3 +1,4 @@
+import json
 from threading import Thread
 from datetime import datetime, UTC
 from socket import socket, AF_INET, SOCK_STREAM
@@ -9,9 +10,12 @@ class Server:
     players = []
     games = {}
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, buff_size):
+        self.addr = (host, port)
+        self.buff_size = buff_size
+
         self.server = socket(AF_INET, SOCK_STREAM)
-        self.server.bind((host, port))
+        self.server.bind(self.addr)
         self.server.listen()
 
         print("[SERVER] Started, waiting for connections...")
@@ -24,6 +28,16 @@ class Server:
 
         self.server.close()
         print("[SERVER] Exit, server has stopped")
+
+    def handle_communication(self, client, player):
+        while True:
+            try:
+                data = client.recv(self.buff_size)
+                data = json.loads(data)
+                print(data)
+            except:
+                self.handle_disconnect(client, player)
+                break
 
     def handle_connect(self):
         while True:
@@ -40,5 +54,7 @@ class Server:
 
         print("[SERVER] Crashed, server has crashed")
 
-    def handle_disconnect(self):
-        pass
+    def handle_disconnect(self, client, player):
+        client.close()
+        self.players.remove(player)
+        print(f"[CONNECTION] {player} disconnected at {datetime.now(UTC)}")

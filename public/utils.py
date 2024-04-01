@@ -3,38 +3,6 @@ import sys
 
 import pygame
 
-
-def generate_board(player_color):
-    from .pieces import King, Queen, Bishop, Knight, Rook, Pawn
-
-    board = [[None for _ in range(8)] for _ in range(8)]
-
-    for row in [0, 7]:
-        if player_color == "w":
-            color = "b" if row == 0 else "w"
-            king_col, queen_col = 4, 3
-        else:
-            color = "b" if row == 7 else "w"
-            king_col, queen_col = 3, 4
-
-        pawn_row = row + (-1 if row == 7 else 1)
-
-        board[row][0] = Rook(row, 0, color, 4)
-        board[row][1] = Knight(row, 1, color, 3)
-        board[row][2] = Bishop(row, 2, color, 2)
-        board[row][queen_col] = Queen(row, queen_col, color, 1)
-        board[row][king_col] = King(row, king_col, color, 0)
-        board[row][5] = Bishop(row, 5, color, 2)
-        board[row][6] = Knight(row, 6, color, 3)
-        board[row][7] = Rook(row, 7, color, 4)
-
-        for col in range(8):
-            board[pawn_row][col] = Pawn(pawn_row, col, color, 5)
-
-    board.append(player_color)
-    return board
-
-
 def is_avail(board, pos, color):
     x, y = pos
 
