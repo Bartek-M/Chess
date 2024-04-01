@@ -77,22 +77,4 @@ class TextInput:
             return
 
         self.text = self.text[:-1]
-
-
-class Card:
-    BG_COLOR = 56, 73, 99
-    FG_COLOR = 235, 235, 235
-
-    def __init__(self, text, pos, width, height, font, border=0, radius=5):
-        self.text = font.render(str(text), True, self.FG_COLOR)
-
-        x, y = pos
-        self.rect = pygame.Rect(x, y, width, height)
-        self.text_pos = self.text.get_rect(center=(x + width // 2, y + height // 2))
-
-        self.border = border
-        self.radius = radius
-
-    def draw(self, win):
-        pygame.draw.rect(win, self.BG_COLOR, self.rect, self.border, self.radius)
-        win.blit(self.text, self.text_pos)
+        

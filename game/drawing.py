@@ -81,6 +81,10 @@ class MenuDrawing:
             ),
         }
 
+    def get_input(self, name):
+        inpt = self.components.get(name)
+        return inpt.text if inpt else None
+
 
 class BoardDrawing:
     LIGHT_COLOR = 238, 238, 238

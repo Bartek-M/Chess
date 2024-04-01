@@ -61,10 +61,15 @@ class BoardHandler:
 
     def handle(self, event):
         if event.type == pygame.KEYUP:
+            if not (event.mod & pygame.KMOD_CTRL):
+                return None
+
             if event.key == pygame.K_r:
                 self.board.reset()
             elif event.key == pygame.K_p:
                 self.board.pause()
+            elif event.key == pygame.K_q:
+                return "start"
 
         if event.type == pygame.MOUSEBUTTONUP:
             self.click(pygame.mouse.get_pos())
@@ -95,7 +100,7 @@ class MenuHandler:
 
         if len(text_input.text) >= text_input.max_size:
             return
-        
+
         if not key.isalnum() and key != " ":
             return
 
