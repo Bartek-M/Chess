@@ -1,3 +1,4 @@
+import sys
 import json
 from threading import Thread
 from datetime import datetime, UTC
@@ -24,10 +25,13 @@ class Server:
     def listen_connections(self):
         conn_thread = Thread(target=self.handle_connect)
         conn_thread.start()
-        conn_thread.join()
 
-        self.server.close()
-        print("[SERVER] Exit, server has stopped")
+        while True:
+            try:
+                input()
+            except:
+                self.close()
+                break
 
     def handle_communication(self, client, player):
         while True:
@@ -42,7 +46,7 @@ class Server:
         while True:
             try:
                 client, addr = self.server.accept()
-                player = Player(addr, client)
+                player = Player(client, addr)
                 self.players.append(player)
 
                 print(f"[CONNECTION] {addr} connected at {datetime.now(UTC)}")
@@ -57,3 +61,11 @@ class Server:
         client.close()
         self.players.remove(player)
         print(f"[CONNECTION] {player} disconnected at {datetime.now(UTC)}")
+
+    def close(self, *_):
+        print("[SERVER] Exit, server has stopped")
+        for player in self.players:
+            player.client.close()
+
+        self.server.close()
+        sys.exit(0)

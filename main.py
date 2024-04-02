@@ -35,7 +35,6 @@ def main():
 
         if screen and client:
             client.disconnect()
-            del client
 
         if screen == "game-1":
             board = Board()
@@ -44,8 +43,8 @@ def main():
             code = drawing.screen.get_input("code-inpt")
 
             try:
-                board = Board()
-                client = Client(board, name, code)
+                client = Client(name, code)
+                board = client.board
             except:
                 info = "[ERROR] Couldn't connect to the server"
                 screen = "start"
@@ -59,13 +58,15 @@ def main():
             drawing.screen = BoardDrawing(drawing.win, FPS, board)
             handler = BoardHandler(board)
 
-        drawing.draw()
-        clock.tick(FPS)
-        screen = None
+        try:
+            drawing.draw()
+            clock.tick(FPS)
+            screen = None
+        except:
+            break
 
     if client:
         client.disconnect()
-        del client
 
     pygame.quit()
     sys.exit(0)

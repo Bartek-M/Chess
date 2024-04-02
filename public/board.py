@@ -2,14 +2,14 @@ from public.pieces import King, Queen, Bishop, Knight, Rook, Pawn
 
 
 class Board:
-    def __init__(self, color="w", client=None):
-        self.color = color
+    def __init__(self, client=None):
+        self.color = "w"
         self.board = self.generate_board()
         self.client = client
 
         self.turn = "w"
         self.timers = (600, 600)
-        self.paused = False
+        self.paused = bool(client)
         self.current = None
 
     def generate_board(self):
@@ -110,6 +110,9 @@ class Board:
         piece.set_pos((x, y))
 
     def pause(self):
+        if self.client:
+            return 
+
         self.paused = not self.paused
 
     def reset(self):

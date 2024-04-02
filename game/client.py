@@ -3,6 +3,8 @@ import json
 from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 
+from public.board import Board
+
 
 class Client:
     HOST = os.getenv("HOST", "127.0.0.1")
@@ -10,8 +12,8 @@ class Client:
     BUFF_SIZE = int(os.getenv("BUFF_SIZE", 512))
     ADDR = (HOST, PORT)
 
-    def __init__(self, board, name="Player", code=None):
-        self.board = board
+    def __init__(self, name="Player", code=None):
+        self.board = Board(self)
 
         self.name = name
         self.code = code
@@ -33,7 +35,7 @@ class Client:
                 self.disconnect()
                 break
 
-        print("Disconnected")
-
     def disconnect(self):
+        print("Disconnect")
         self.server.close()
+        del self
