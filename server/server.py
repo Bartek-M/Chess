@@ -12,6 +12,7 @@ from server.player import Player
 class Server:
     players = []
     games = {}
+    waiting = set()
 
     def __init__(self, host, port, buff_size):
         self.addr = (host, port)
@@ -53,20 +54,31 @@ class Server:
                     case "move":
                         pass
             except Exception as e:
+                print("[ERROR]", e)
                 self.handle_disconnect(client, player)
                 break
 
-    def join_lobby(self, code, player, name):
+    def join_lobby(self, code, player, name, wait=False):
         client = player.client
         game = self.games.get(code)
 
         if not game or len(game) >= 2:
+            if code != "new":
+                code = self.waiting.pop() if len(self.waiting) else "new"
+                return self.join_lobby(code, player, name, True)
+
             code = secrets.token_hex(3)
+            if wait:
+                self.waiting.add(code)
+
             self.games[code] = [player]
             self.send(client, {"type": "hello", "name": name, "code": code})
             return code
 
         self.games[code].append(player)
+        if code in self.waiting:
+            self.waiting.remove(code)
+
         color = random.choice(["w", "b"])
         players = (game[0].name, name)
         data = {"type": "connect", "players": players, "color": color}
@@ -85,18 +97,18 @@ class Server:
                 print(f"[CONNECTION] {addr} connected at {datetime.now(UTC)}")
                 Thread(target=self.receive, args=(client, player)).start()
             except Exception as e:
-                print("[ERROR]", e)
                 break
 
-        print("[SERVER] Crashed, server has crashed")
-
     def handle_disconnect(self, client, player):
-        client.close()
-        if self.games.get(player.code):
-            del self.games[player.code]
+        code = player.code
+        if self.games.get(code):
+            del self.games[code]
+        if code in self.waiting:
+            self.waiting.remove(code)
 
         self.players.remove(player)
         print(f"[CONNECTION] {player} disconnected at {datetime.now(UTC)}")
+        client.close()
         del player
 
     def close(self, *_):
