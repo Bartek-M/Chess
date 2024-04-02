@@ -21,9 +21,9 @@ def main():
     pygame.display.set_caption(TITLE)
 
     drawing = Drawing()
-    screen = "start"
+    client = None
     info = None
-    handler = None
+    screen, handler = "start", None
 
     while run:
         for event in pygame.event.get():
@@ -33,6 +33,10 @@ def main():
             if handler:
                 screen = handler.handle(event)
 
+        if screen and client:
+            client.disconnect()
+            del client
+
         if screen == "game-1":
             board = Board()
         elif screen == "game-2":
@@ -41,7 +45,7 @@ def main():
 
             try:
                 board = Board()
-                Client(board, name, code)
+                client = Client(board, name, code)
             except:
                 info = "[ERROR] Couldn't connect to the server"
                 screen = "start"
@@ -58,6 +62,10 @@ def main():
         drawing.draw()
         clock.tick(FPS)
         screen = None
+
+    if client:
+        client.disconnect()
+        del client
 
     pygame.quit()
     sys.exit(0)

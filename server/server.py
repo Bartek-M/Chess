@@ -32,9 +32,8 @@ class Server:
     def handle_communication(self, client, player):
         while True:
             try:
-                data = client.recv(self.buff_size)
+                data = client.recv(self.buff_size).decode()
                 data = json.loads(data)
-                print(data)
             except:
                 self.handle_disconnect(client, player)
                 break
@@ -47,7 +46,7 @@ class Server:
                 self.players.append(player)
 
                 print(f"[CONNECTION] {addr} connected at {datetime.now(UTC)}")
-                Thread(target=None, args=(player,)).start()
+                Thread(target=self.handle_communication, args=(client, player)).start()
             except Exception as e:
                 print("[ERROR]", e)
                 break

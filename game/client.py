@@ -1,7 +1,7 @@
 import os
 import json
 from socket import socket, AF_INET, SOCK_STREAM
-from threading import Thread, Lock
+from threading import Thread
 
 
 class Client:
@@ -18,6 +18,7 @@ class Client:
 
         self.server = socket(AF_INET, SOCK_STREAM)
         self.server.connect(self.ADDR)
+        Thread(target=self.receive).start()
 
     def send(self, data):
         data = bytes(json.dumps(data), "utf8")
@@ -26,11 +27,13 @@ class Client:
     def receive(self):
         while True:
             try:
-                data = self.client_socket.recv(self.BUFF_SIZE).decode()
+                data = self.server.recv(self.BUFF_SIZE).decode()
                 data = json.loads(data)
-                print(data)
             except:
+                self.disconnect()
                 break
+
+        print("Disconnected")
 
     def disconnect(self):
         self.server.close()
