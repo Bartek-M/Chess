@@ -167,7 +167,7 @@ class BoardDrawing:
             code = self.board.client.code
             info = f"Waiting... [code: {code}]"
         else:
-            name_1, name_2 = "Player 2", "Player 1"
+            name_1, name_2 = self.board.players
             info = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
             if self.board.paused:
                 info += " [Paused]"
@@ -186,7 +186,7 @@ class BoardDrawing:
         if self.board.color == "w":
             timer_1, timer_2 = format_time(timer_1), format_time(timer_2)
         else:
-            timer_1, timer_2 = format_time(timer_2), format_time(timer_2)
+            timer_1, timer_2 = format_time(timer_2), format_time(timer_1)
 
         Drawing.draw_text(self.win, FONT_L, timer_2, (WIDTH - PAD_X - 70, 20))
         Drawing.draw_text(self.win, FONT_L, timer_1, (WIDTH - PAD_X - 70, HEIGHT - 40))

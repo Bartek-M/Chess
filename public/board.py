@@ -8,6 +8,7 @@ class Board:
         self.client = client
 
         self.turn = "w"
+        self.players = ("Player 2", "Player 1")
         self.timers = (600, 600)
         self.paused = bool(client)
         self.current = None
@@ -111,12 +112,15 @@ class Board:
 
     def pause(self):
         if self.client:
-            return 
+            return
 
         self.paused = not self.paused
 
-    def reset(self):
-        self.board = self.generate_board(self.color)
+    def reset(self, players=("Player 2", "Player 1"), color=None):
+        self.players = players if color == "w" else players[::-1]
+        self.color = color
+
+        self.board = self.generate_board()
         self.timers = (600, 600)
         self.turn = "w"
         self.paused = False

@@ -30,9 +30,22 @@ class Client:
     def receive(self):
         while True:
             try:
-                data = self.server.recv(self.BUFF_SIZE).decode()
+                data = self.server.recv(self.BUFF_SIZE).decode("utf-8")
                 data = json.loads(data)
-                print(data)
+
+                match data.get("type"):
+                    case "hello":
+                        self.code = data.get("code")
+                    case "connect":
+                        players = data.get("players", ("Player 2", self.name))
+                        color = data.get("color", "w")
+                        self.board.reset(players, color)
+                    case "move":
+                        pass
+                    case "win":
+                        pass
+                    case "disconnect":
+                        pass
             except:
                 self.disconnect()
                 break
