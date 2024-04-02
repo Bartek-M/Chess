@@ -44,7 +44,6 @@ def main():
             name = drawing.screen.get_input("name-inpt", "Player")
             code = drawing.screen.get_input("code-inpt", "").lower()
             os.environ["name"] = name
-            os.environ["code"] = code
 
             try:
                 client = Client(name, code)
@@ -59,7 +58,7 @@ def main():
             drawing.screen = MenuDrawing(drawing.win, info)
             handler = MenuHandler(drawing.screen)
         elif screen in ["game-1", "game-2"]:
-            drawing.screen = BoardDrawing(drawing.win, FPS, board)
+            drawing.screen = BoardDrawing(drawing.win, board)
             handler = BoardHandler(board)
 
         try:

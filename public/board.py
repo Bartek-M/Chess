@@ -1,3 +1,5 @@
+import time
+
 from public.pieces import King, Queen, Bishop, Knight, Rook, Pawn
 
 
@@ -9,8 +11,11 @@ class Board:
 
         self.turn = "w"
         self.players = ("Player 2", "Player 1")
-        self.timers = (600, 600)
         self.paused = bool(client)
+
+        self.start_time = time.time()
+        self.timers = (600, 600)
+
         self.current = None
 
     def generate_board(self):
@@ -52,8 +57,13 @@ class Board:
         piece.selected = True
         self.current = piece
 
-        if self.turn == piece.color and not self.paused:
-            piece.valid_moves = piece.get_moves(self.board)
+        if self.client and piece.color != self.color:
+            return
+
+        if piece.color != self.turn or self.paused:
+            return
+
+        piece.valid_moves = piece.get_moves(self.board)
 
     def reset_selected(self):
         if not self.current:
@@ -109,30 +119,38 @@ class Board:
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
+        self.start_time = time.time()
 
     def pause(self):
         if self.client:
             return
 
         self.paused = not self.paused
+        self.start_time = time.time()
 
     def reset(self, players=("Player 2", "Player 1"), color=None):
         self.players = players if color == "w" else players[::-1]
         self.color = color
-
         self.board = self.generate_board()
-        self.timers = (600, 600)
+
         self.turn = "w"
         self.paused = False
+
+        self.timers = (600, 600)
+        self.start_time = time.time()
+
         self.current = None
 
-    def timer(self, fps):
+    def timer(self):
         if self.paused:
             return
 
         time_1, time_2 = self.timers
-        self.timers = (
-            (time_1 - 1 / fps, time_2)
-            if self.turn == "w"
-            else (time_1, time_2 - 1 / fps)
-        )
+
+        if self.turn == "w":
+            time_1 -= time.time() - self.start_time
+        else:
+            time_2 -= time.time() - self.start_time
+
+        self.start_time = time.time()
+        self.timers = time_1, time_2

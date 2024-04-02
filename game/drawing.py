@@ -76,21 +76,19 @@ class MenuDrawing:
             item.draw(self.win)
 
     def setup_components(self):
-        width, height = 400, 50
-        x, y = WIDTH // 2 - width // 2, HEIGHT // 2 - 100
+        dims = 400, 50
+        x, y = WIDTH // 2 - dims[0] // 2, HEIGHT // 2 - 100
 
-        name, code = os.getenv("name", "Player"), os.getenv("code", "1234")
+        name = os.getenv("name", "Player")
 
         return {
-            "name-inpt": TextInput(name, "Name:", (x, y), width, height, FONT_L),
-            "code-inpt": TextInput(
-                code, "Code:", (x, y := y + 75), width, height, FONT_L
-            ),
+            "name-inpt": TextInput(name, "Name:", (x, y), dims, FONT_L),
+            "code-inpt": TextInput("", "Code:", (x, y := y + 75), dims, FONT_L),
             "local-btn": Button(
-                "Local", (x, y := y + 200), width, height, FONT_L, lambda: "game-1"
+                "Local", (x, y := y + 200), dims, FONT_L, lambda: "game-1"
             ),
             "multiplayer-btn": Button(
-                "Multiplayer", (x, y + 75), width, height, FONT_L, lambda: "game-2"
+                "Multiplayer", (x, y + 75), dims, FONT_L, lambda: "game-2"
             ),
         }
 
@@ -107,9 +105,8 @@ class BoardDrawing:
     CYAN = 56, 220, 255
     RED = 255, 50, 50
 
-    def __init__(self, win, fps, board):
+    def __init__(self, win, board):
         self.win = win
-        self.fps = fps
         self.board = board
 
         self.white_assets, self.black_assets = load_assets(TILE_SIZE)
@@ -190,7 +187,7 @@ class BoardDrawing:
 
         Drawing.draw_text(self.win, FONT_L, timer_2, (WIDTH - PAD_X - 70, 20))
         Drawing.draw_text(self.win, FONT_L, timer_1, (WIDTH - PAD_X - 70, HEIGHT - 40))
-        self.board.timer(self.fps)
+        self.board.timer()
 
     def draw_cords(self):
         nums = ["8", "7", "6", "5", "4", "3", "2", "1"]
