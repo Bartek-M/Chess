@@ -1,3 +1,4 @@
+import os
 import sys
 
 import pygame
@@ -35,12 +36,15 @@ def main():
 
         if screen and client:
             client.disconnect()
+            client = None
 
         if screen == "game-1":
             board = Board()
         elif screen == "game-2":
             name = drawing.screen.get_input("name-inpt", "Player")
             code = drawing.screen.get_input("code-inpt")
+            os.environ["name"] = name
+            os.environ["code"] = code
 
             try:
                 client = Client(name, code)
@@ -67,6 +71,7 @@ def main():
 
     if client:
         client.disconnect()
+        client = None
 
     pygame.quit()
     sys.exit(0)

@@ -1,3 +1,4 @@
+import os
 import pygame
 
 from game.components import Button, TextInput
@@ -78,10 +79,12 @@ class MenuDrawing:
         width, height = 400, 50
         x, y = WIDTH // 2 - width // 2, HEIGHT // 2 - 100
 
+        name, code = os.getenv("name", "Player"), os.getenv("code", "1234")
+
         return {
-            "name-inpt": TextInput("Player", "Name:", (x, y), width, height, FONT_L),
+            "name-inpt": TextInput(name, "Name:", (x, y), width, height, FONT_L),
             "code-inpt": TextInput(
-                "1234", "Code:", (x, y := y + 75), width, height, FONT_L
+                code, "Code:", (x, y := y + 75), width, height, FONT_L
             ),
             "local-btn": Button(
                 "Local", (x, y := y + 200), width, height, FONT_L, lambda: "game-1"
@@ -159,16 +162,22 @@ class BoardDrawing:
         pygame.draw.circle(self.win, color, (cx, cy), radius, border)
 
     def draw_players(self):
-        turn = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
-        if self.board.paused:
-            turn += " [Paused]"
+        if self.board.client and self.board.paused:
+            name_1, name_2 = "-", self.board.client.name
+            code = self.board.client.code
+            info = f"Waiting... [code: {code}]"
+        else:
+            name_1, name_2 = "Player 2", "Player 1"
+            info = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
+            if self.board.paused:
+                info += " [Paused]"
 
         if self.board.color == "w":
-            player_1, player_2 = "Black: Player 2", "White: Player 1"
+            player_1, player_2 = f"Black: {name_1}", f"White: {name_2}"
         else:
-            player_1, player_2 = "White: Player 2", "Black: Player 1"
+            player_1, player_2 = f"White: {name_1}", f"Black: {name_2}"
 
-        Drawing.draw_text(self.win, FONT_L, turn, (WIDTH // 2, 70), center=True)
+        Drawing.draw_text(self.win, FONT_L, info, (WIDTH // 2, 70), center=True)
         Drawing.draw_text(self.win, FONT_L, player_1, (PAD_X, 20))
         Drawing.draw_text(self.win, FONT_L, player_2, (PAD_X, HEIGHT - 40))
 

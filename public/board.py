@@ -51,7 +51,7 @@ class Board:
         piece.selected = True
         self.current = piece
 
-        if self.turn == piece.color:
+        if self.turn == piece.color and not self.paused:
             piece.valid_moves = piece.get_moves(self.board)
 
     def reset_selected(self):

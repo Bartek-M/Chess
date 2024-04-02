@@ -21,6 +21,7 @@ class Client:
         self.server = socket(AF_INET, SOCK_STREAM)
         self.server.connect(self.ADDR)
         Thread(target=self.receive).start()
+        self.send({"type": "hello", "name": self.name, "code": self.code})
 
     def send(self, data):
         data = bytes(json.dumps(data), "utf8")
@@ -31,6 +32,7 @@ class Client:
             try:
                 data = self.server.recv(self.BUFF_SIZE).decode()
                 data = json.loads(data)
+                print(data)
             except:
                 self.disconnect()
                 break

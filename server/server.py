@@ -38,6 +38,13 @@ class Server:
             try:
                 data = client.recv(self.buff_size).decode()
                 data = json.loads(data)
+                print(data)
+
+                match data.get("type", None):
+                    case "hello":
+                        name = data.get("name", "Player")
+                        code = data.get("code")
+                        player.set_data(name, code)
             except:
                 self.handle_disconnect(client, player)
                 break
