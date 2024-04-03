@@ -41,7 +41,9 @@ class Piece:
             if 0 <= bx < 8 and 0 <= by < 8:
                 bx = bx * tile_size + padding[0]
                 by = by * tile_size + padding[1]
-                pygame.draw.rect(win, self.DRAG_COLOR, (bx, by, tile_size, tile_size), 5)
+                pygame.draw.rect(
+                    win, self.DRAG_COLOR, (bx, by, tile_size, tile_size), 5
+                )
 
             x -= tile_size // 2
             y -= tile_size // 2

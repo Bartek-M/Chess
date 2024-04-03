@@ -76,7 +76,7 @@ class Board:
         self.current.valid_moves = [None]
         self.current = None
 
-    def move(self, piece, pos):
+    def move(self, piece, pos, checked=False):
         if self.paused:
             return self.reset_selected()
 
@@ -90,6 +90,10 @@ class Board:
         self.board[piece.row][piece.col] = None
         self.turn = "b" if self.turn == "w" else "w"
         self.reset_selected()
+
+        if self.client and not checked:
+            data = {"type": "move", "piece": (piece.row, piece.col), "pos": pos}
+            return self.client.send(data)
 
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)

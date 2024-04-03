@@ -1,7 +1,6 @@
 import os
-import sys
-
 import pygame
+
 
 def is_avail(board, pos, color):
     x, y = pos

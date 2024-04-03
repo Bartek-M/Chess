@@ -7,6 +7,7 @@ from datetime import datetime, UTC
 from socket import socket, AF_INET, SOCK_STREAM
 
 from server.player import Player
+from public.board import Board
 
 
 class Server:
@@ -52,7 +53,7 @@ class Server:
                         code = self.join_lobby(data.get("code"), player, name)
                         player.set_data(name, code)
                     case "move":
-                        pass
+                        print(data)
             except Exception as e:
                 print("[ERROR]", e)
                 self.handle_disconnect(client, player)
@@ -76,6 +77,8 @@ class Server:
             return code
 
         self.games[code].append(player)
+        self.games[code].append(Board())
+
         if code in self.waiting:
             self.waiting.remove(code)
 
