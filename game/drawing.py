@@ -161,8 +161,9 @@ class BoardDrawing:
     def draw_players(self):
         if self.board.client and self.board.paused:
             name_1, name_2 = "-", self.board.client.name
+            end_text = self.board.client.end_text
             code = self.board.client.code
-            info = f"Waiting... [code: {code}]"
+            info = end_text if end_text else f"Waiting... [code: {code}]"
         else:
             name_1, name_2 = self.board.players
             info = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"

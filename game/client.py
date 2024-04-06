@@ -18,6 +18,7 @@ class Client:
 
         self.name = name
         self.code = code
+        self.end_text = None
 
         self.server = socket(AF_INET, SOCK_STREAM)
         self.server.connect(self.ADDR)
@@ -55,13 +56,15 @@ class Client:
                         piece = self.board.board[row][col]
                         if piece:
                             self.board.move(piece, pos, True)
-                    case "win":
-                        pass
-                    case "disconnect":
-                        pass
+                    case "quit":
+                        self.end_text = "Another player disconnected"
+                        self.board.paused = True
             except:
-                self.disconnect()
                 break
+
+        self.end_text = "Disconnected from the server"
+        self.board.paused = True
+        self.server.close()
 
     def disconnect(self):
         print("Disconnect")

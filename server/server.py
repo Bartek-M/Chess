@@ -45,28 +45,23 @@ class Server:
             try:
                 data = client.recv(self.buff_size).decode("utf-8")
                 data = json.loads(data)
-                data_type = data.get("type", None)
 
-                if data_type == "hello":
-                    name = data.get("name", "Player")
-                    self.join_lobby(data.get("code"), player, name)
-                    continue
+                match data.get("type", None):
+                    case "hello":
+                        name = data.get("name", "Player")
+                        self.join_lobby(data.get("code"), player, name)
+                    case "move":
+                        game = self.games.get(player.code)
+                        if not game or not game.started:
+                            continue
 
-                print(data)
-                game = self.games.get(player.code)
-                if not game or not game.started:
-                    continue
+                        result = game.move(data.get("piece"), data.get("pos"))
+                        if not result:
+                            continue
 
-                if data_type == "move":
-                    result = game.move(data.get("piece"), data.get("pos"))
-
-                if not result:
-                    continue
-                for player in game.players:
-                    self.send(player.client, result)
-
-            except Exception as e:
-                print("[ERROR]", e)
+                        for player in game.players:
+                            self.send(player.client, result)
+            except:
                 self.handle_disconnect(client, player)
                 break
 
@@ -104,24 +99,30 @@ class Server:
                 client, addr = self.server.accept()
                 player = Player(client, addr)
                 self.players.append(player)
-
-                print(f"[CONNECTION] {addr} connected at {datetime.now(UTC)}")
                 Thread(target=self.receive, args=(client, player)).start()
             except Exception as e:
                 break
 
     def handle_disconnect(self, client, player):
         code = player.code
-        if self.games.get(code):
+        game = self.games.get(code)
+
+        if game:
+            for p in game.players:
+                if p == player:
+                    continue
+                self.send(p.client, {"type": "quit"})
+
             del self.games[code]
+
         if code in self.waiting:
             self.waiting.remove(code)
+
         if player in self.players:
             self.players.remove(player)
+            del player
 
-        print(f"[CONNECTION] {player} disconnected at {datetime.now(UTC)}")
         client.close()
-        del player
 
     def close(self, *_):
         print("[SERVER] Exit, server has stopped")
