@@ -79,7 +79,7 @@ class MenuDrawing:
         dims = 400, 50
         x, y = WIDTH // 2 - dims[0] // 2, HEIGHT // 2 - 100
 
-        name = os.getenv("name", "Player")
+        name = os.getenv("NAME", "Player")
 
         return {
             "name-inpt": TextInput(name, "Name:", (x, y), dims, FONT_L),

@@ -32,13 +32,13 @@ class Server:
             try:
                 input()
             except:
-                self.close()
                 break
 
-    def send(self, client, data):
-        data = bytes(json.dumps(data), "utf-8")
+        self.close()
 
+    def send(self, client, data):
         try:
+            data = bytes(json.dumps(data), "utf-8")
             client.send(data)
         except:
             pass
@@ -48,24 +48,25 @@ class Server:
             try:
                 data = client.recv(self.buff_size).decode("utf-8")
                 data = json.loads(data)
-
-                match data.get("type", None):
-                    case "hello":
-                        name = data.get("name", "Player")
-                        self.join_lobby(data.get("code"), player, name)
-                    case "move":
-                        game = self.games.get(player.code)
-                        if not game or not game.started:
-                            continue
-
-                        result = game.move(data.get("piece"), data.get("pos"))
-                        if not result:
-                            continue
-
-                        for player in game.players:
-                            self.send(player.client, result)
             except:
                 break
+
+            data_type = data.get("type", None)
+
+            if data_type == "hello":
+                name = data.get("name", "Player")
+                self.join_lobby(data.get("code"), player, name)
+            elif data_type == "move":
+                game = self.games.get(player.code)
+                if not game or not game.started:
+                    continue
+
+                result = game.move(data.get("piece"), data.get("pos"))
+                if not result:
+                    continue
+
+                for player in game.players:
+                    self.send(player.client, result)
 
         self.handle_disconnect(client, player)
 
@@ -128,6 +129,7 @@ class Server:
 
     def close(self):
         print("[SERVER] Exit, server has stopped")
+
         for player in self.players:
             player.client.close()
 

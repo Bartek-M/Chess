@@ -34,33 +34,35 @@ class Client:
             try:
                 data = self.server.recv(self.BUFF_SIZE).decode("utf-8")
                 data = json.loads(data)
-
-                match data.get("type"):
-                    case "hello":
-                        self.code = data.get("code")
-                    case "connect":
-                        players = data.get("players", ("Player 2", self.name))
-                        color = data.get("color", "w")
-                        self.board.reset(players, color)
-                    case "move":
-                        piece_pos = data.get("piece")
-                        pos = data.get("pos")
-
-                        if not (piece_pos and pos):
-                            continue
-                        if self.board.color == "b":
-                            piece_pos = translate_pos(piece_pos)
-                            pos = translate_pos(pos)
-
-                        row, col = piece_pos
-                        piece = self.board.board[row][col]
-                        if piece:
-                            self.board.move(piece, pos, True)
-                    case "quit":
-                        self.end_text = "Another player disconnected"
-                        self.board.paused = True
             except:
                 break
+
+            data_type = data.get("type")
+
+            if data_type == "hello":
+                self.code = data.get("code")
+            elif data_type == "connect":
+                players = data.get("players", ("Player 2", self.name))
+                color = data.get("color", "w")
+                self.board.reset(players, color)
+            elif data_type == "move":
+                piece_pos = data.get("piece")
+                pos = data.get("pos")
+
+                if not (piece_pos and pos):
+                    continue
+                if self.board.color == "b":
+                    piece_pos = translate_pos(piece_pos)
+                    pos = translate_pos(pos)
+
+                row, col = piece_pos
+                piece = self.board.board[row][col]
+
+                if piece:
+                    self.board.move(piece, pos, True)
+            elif data_type == "quit":
+                self.end_text = "Another player disconnected"
+                self.board.paused = True
 
         self.end_text = "Disconnected from the server"
         self.board.paused = True
