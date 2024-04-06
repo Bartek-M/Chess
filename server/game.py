@@ -27,6 +27,7 @@ class Game:
         if not piece:
             return
 
+        piece.valid_moves = [None]
         moved = self.board.move(piece, pos)
         if not moved:
             return

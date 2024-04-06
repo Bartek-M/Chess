@@ -2,7 +2,6 @@ import sys
 import json
 import secrets
 from threading import Thread
-from datetime import datetime, UTC
 from socket import socket, AF_INET, SOCK_STREAM
 
 from server.player import Player
@@ -38,7 +37,11 @@ class Server:
 
     def send(self, client, data):
         data = bytes(json.dumps(data), "utf-8")
-        client.send(data)
+
+        try:
+            client.send(data)
+        except:
+            pass
 
     def receive(self, client, player):
         while True:
@@ -110,8 +113,6 @@ class Server:
 
         if game:
             for p in game.players:
-                if p == player:
-                    continue
                 self.send(p.client, {"type": "quit"})
 
             del self.games[code]
