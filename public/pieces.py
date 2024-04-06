@@ -230,7 +230,7 @@ class Pawn(Piece):
         self.board_color = color
         self.pawn = True
 
-    def get_moves(self, board):
+    def get_moves(self, board, passed_pawn=None):
         moves = []
         d = 1 if self.board_color == self.color else -1
 
@@ -248,6 +248,12 @@ class Pawn(Piece):
 
         if is_avail(board, (self.col + 1, self.row - 1 * d), self.color):
             moves.append([self.col + 1, self.row - 1 * d])
+
+        if passed_pawn:
+            if is_avail(board, [self.col - 1, self.row], self.color) == passed_pawn:
+                moves.append([self.col - 1, self.row - 1 * d])
+            elif is_avail(board, [self.col + 1, self.row], self.color) == passed_pawn:
+                moves.append([self.col + 1, self.row - 1 * d])
 
         return moves if moves else [None]
 

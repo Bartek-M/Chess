@@ -18,6 +18,7 @@ class Board:
         self.timers = (600, 600)
 
         self.current = None
+        self.passed_pawn = None
 
     def generate_board(self):
         board = [[None for _ in range(8)] for _ in range(8)]
@@ -49,7 +50,6 @@ class Board:
     def select(self, piece):
         if self.current:
             self.current.selected = False
-
         if self.current == piece:
             return self.reset_selected()
 
@@ -58,11 +58,14 @@ class Board:
 
         if self.client and piece.color != self.color:
             return
-
         if piece.color != self.turn or self.paused:
             return
 
-        piece.valid_moves = piece.get_moves(self.board)
+        piece.valid_moves = (
+            piece.get_moves(self.board, self.passed_pawn)
+            if piece.pawn
+            else piece.get_moves(self.board)
+        )
 
     def reset_selected(self):
         if not self.current:
@@ -81,7 +84,11 @@ class Board:
 
         if not checked:
             if None in piece.valid_moves:
-                piece.valid_moves = piece.get_moves(self.board)
+                piece.valid_moves = (
+                    piece.get_moves(self.board, self.passed_pawn)
+                    if piece.pawn
+                    else piece.get_moves(self.board)
+                )
 
             if pos not in piece.valid_moves:
                 return False
@@ -125,6 +132,18 @@ class Board:
 
             self.board[y][new_x] = new
             new.set_pos((new_x, y))
+
+        if piece.pawn and self.passed_pawn:
+            p_pawn = self.passed_pawn
+            d = 1 if piece.color == self.color else -1
+
+            if x == p_pawn.col and (y + d) == p_pawn.row:
+                self.board[p_pawn.row][p_pawn.col] = None
+
+        if piece.pawn and abs(piece.row - y) == 2:
+            self.passed_pawn = piece
+        else:
+            self.passed_pawn = None
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
