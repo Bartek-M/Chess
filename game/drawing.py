@@ -129,7 +129,7 @@ class BoardDrawing:
                 pygame.draw.rect(self.win, color, (x, y, TILE_SIZE, TILE_SIZE))
                 piece = self.board.board[i][j]
 
-                if current and (j, i) in current.valid_moves:
+                if current and [j, i] in current.valid_moves:
                     self.draw_valid_moves(x, y, piece)
 
                 if piece is None or piece.dragged:

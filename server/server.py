@@ -1,13 +1,12 @@
 import sys
 import json
 import secrets
-import random
 from threading import Thread
 from datetime import datetime, UTC
 from socket import socket, AF_INET, SOCK_STREAM
 
 from server.player import Player
-from public.board import Board
+from server.game import Game
 
 
 class Server:
@@ -46,14 +45,26 @@ class Server:
             try:
                 data = client.recv(self.buff_size).decode("utf-8")
                 data = json.loads(data)
+                data_type = data.get("type", None)
 
-                match data.get("type", None):
-                    case "hello":
-                        name = data.get("name", "Player")
-                        code = self.join_lobby(data.get("code"), player, name)
-                        player.set_data(name, code)
-                    case "move":
-                        print(data)
+                if data_type == "hello":
+                    name = data.get("name", "Player")
+                    self.join_lobby(data.get("code"), player, name)
+                    continue
+
+                print(data)
+                game = self.games.get(player.code)
+                if not game or not game.started:
+                    continue
+
+                if data_type == "move":
+                    result = game.move(data.get("piece"), data.get("pos"))
+
+                if not result:
+                    continue
+                for player in game.players:
+                    self.send(player.client, result)
+
             except Exception as e:
                 print("[ERROR]", e)
                 self.handle_disconnect(client, player)
@@ -63,7 +74,7 @@ class Server:
         client = player.client
         game = self.games.get(code)
 
-        if not game or len(game) >= 2:
+        if not game or game.started:
             if code != "new":
                 code = self.waiting.pop() if len(self.waiting) else "new"
                 return self.join_lobby(code, player, name, True)
@@ -72,23 +83,20 @@ class Server:
             if wait:
                 self.waiting.add(code)
 
-            self.games[code] = [player]
-            self.send(client, {"type": "hello", "name": name, "code": code})
-            return code
-
-        self.games[code].append(player)
-        self.games[code].append(Board())
+            player.set_data(name, code)
+            self.games[code] = Game(player, code)
+            return self.send(client, {"type": "hello", "name": name, "code": code})
 
         if code in self.waiting:
             self.waiting.remove(code)
 
-        color = random.choice(["w", "b"])
-        players = (game[0].name, name)
-        data = {"type": "connect", "players": players, "color": color}
+        player.set_data(name, code)
+        game.start(player)
+        data = {"type": "connect", "players": game.get_names(), "color": game.color}
+        color_2 = "b" if game.color == "w" else "w"
 
-        self.send(game[0].client, data)
-        self.send(game[1].client, {**data, "color": ("b" if color == "w" else "w")})
-        return code
+        self.send(game.players[0].client, data)
+        self.send(game.players[1].client, {**data, "color": color_2})
 
     def handle_connect(self):
         while True:
@@ -108,8 +116,9 @@ class Server:
             del self.games[code]
         if code in self.waiting:
             self.waiting.remove(code)
+        if player in self.players:
+            self.players.remove(player)
 
-        self.players.remove(player)
         print(f"[CONNECTION] {player} disconnected at {datetime.now(UTC)}")
         client.close()
         del player

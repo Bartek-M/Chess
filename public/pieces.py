@@ -73,7 +73,7 @@ class King(Piece):
                 avail = is_avail(board, (x, y), self.color)
 
                 if avail is not None:
-                    moves.append((x, y))
+                    moves.append([x, y])
 
         if not self.moved:
             moves += self.check_castle(board)
@@ -99,7 +99,7 @@ class King(Piece):
                     continue
 
                 if piece.color == self.color and piece.rook and not piece.moved:
-                    moves.append((piece.col, self.row))
+                    moves.append([piece.col, self.row])
 
                 break
 
@@ -121,7 +121,7 @@ class Queen(Piece):
                 avail = is_avail(board, (x, y), self.color)
 
                 if avail is not None:
-                    moves.append((x, y))
+                    moves.append([x, y])
                 else:
                     break
 
@@ -136,7 +136,7 @@ class Queen(Piece):
                 avail = is_avail(board, (x, y), self.color)
 
                 if avail is not None:
-                    moves.append((x, y))
+                    moves.append([x, y])
                 else:
                     break
 
@@ -160,7 +160,7 @@ class Bishop(Piece):
                 avail = is_avail(board, (x, y), self.color)
 
                 if avail is not None:
-                    moves.append((x, y))
+                    moves.append([x, y])
                 else:
                     break
 
@@ -187,7 +187,7 @@ class Knight(Piece):
                 avail = is_avail(board, (x, y), self.color)
 
                 if avail is not None:
-                    moves.append((x, y))
+                    moves.append([x, y])
 
         return moves if moves else [None]
 
@@ -211,7 +211,7 @@ class Rook(Piece):
                 avail = is_avail(board, (x, y), self.color)
 
                 if avail is not None:
-                    moves.append((x, y))
+                    moves.append([x, y])
                 else:
                     break
 
@@ -225,28 +225,29 @@ class Rook(Piece):
 
 
 class Pawn(Piece):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, color, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.board_color = color
         self.pawn = True
 
     def get_moves(self, board):
         moves = []
-        d = 1 if board[-1] == self.color else -1
+        d = 1 if self.board_color == self.color else -1
 
         if is_avail(board, (self.col, self.row - 1 * d), self.color) == False:
-            moves.append((self.col, self.row - 1 * d))
+            moves.append([self.col, self.row - 1 * d])
 
             if (
-                self.row == (6 if board[-1] == self.color else 1)
+                self.row == (6 if self.board_color == self.color else 1)
                 and is_avail(board, (self.col, self.row - 2 * d), self.color) == False
             ):
-                moves.append((self.col, self.row - 2 * d))
+                moves.append([self.col, self.row - 2 * d])
 
         if is_avail(board, (self.col - 1, self.row - 1 * d), self.color):
-            moves.append((self.col - 1, self.row - 1 * d))
+            moves.append([self.col - 1, self.row - 1 * d])
 
         if is_avail(board, (self.col + 1, self.row - 1 * d), self.color):
-            moves.append((self.col + 1, self.row - 1 * d))
+            moves.append([self.col + 1, self.row - 1 * d])
 
         return moves if moves else [None]
 

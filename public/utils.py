@@ -4,7 +4,6 @@ import pygame
 
 def is_avail(board, pos, color):
     x, y = pos
-
     if not (0 <= x < 8 and 0 <= y < 8):
         return None
 
@@ -12,7 +11,6 @@ def is_avail(board, pos, color):
 
     if piece is None:
         return False
-
     if piece.color == color:
         return None
 
@@ -21,18 +19,16 @@ def is_avail(board, pos, color):
 
 def translate_pos(pos):
     x, y = pos
-    return (x * -1 - 1, y * -1 - 1)
+    return [abs(x - 7), abs(y - 7)]
 
 
 def format_time(time):
     time = round(time)
-
     minute = str(time // 60)
     second = str(time % 60)
 
     while len(minute) < 2:
         minute = "0" + minute
-
     while len(second) < 2:
         second = "0" + second
 

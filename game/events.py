@@ -17,8 +17,8 @@ class BoardHandler:
 
         current = self.board.current
         if current:
-            if (x, y) in current.valid_moves and current.color == self.board.turn:
-                return self.board.move(self.board.current, (x, y))
+            if [x, y] in current.valid_moves and current.color == self.board.turn:
+                return self.board.move(self.board.current, [x, y])
 
             piece = self.board.board[y][x]
             if not (piece or current.dragged):
@@ -47,8 +47,8 @@ class BoardHandler:
         if not piece or piece.dragged:
             return
 
-        if current and (x, y) in current.valid_moves:
-            return self.board.move(current, (x, y))
+        if current and [x, y] in current.valid_moves:
+            return self.board.move(current, [x, y])
 
         if piece != current:
             self.board.reset_selected()

@@ -1,6 +1,7 @@
 import time
 
 from public.pieces import King, Queen, Bishop, Knight, Rook, Pawn
+from public.utils import translate_pos
 
 
 class Board:
@@ -41,9 +42,7 @@ class Board:
             board[row][7] = Rook(row, 7, color, 4)
 
             for col in range(8):
-                board[pawn_row][col] = Pawn(pawn_row, col, color, 5)
-
-            board.append(self.color)
+                board[pawn_row][col] = Pawn(self.color, pawn_row, col, color, 5)
 
         return board
 
@@ -80,20 +79,26 @@ class Board:
         if self.paused:
             return self.reset_selected()
 
-        if None in piece.valid_moves:
-            piece.valid_moves = piece.get_moves(self.board)
+        if not checked:
+            if None in piece.valid_moves:
+                piece.valid_moves = piece.get_moves(self.board)
 
-        if pos not in piece.valid_moves:
-            return
+            if pos not in piece.valid_moves:
+                return
+
+            if self.client:
+                piece_pos = (piece.row, piece.col)
+                if self.color == "b":
+                    piece_pos = translate_pos(piece_pos)
+                    pos = translate_pos(pos)
+
+                data = {"type": "move", "piece": piece_pos, "pos": pos}
+                return self.client.send(data)
 
         x, y = pos
         self.board[piece.row][piece.col] = None
         self.turn = "b" if self.turn == "w" else "w"
         self.reset_selected()
-
-        if self.client and not checked:
-            data = {"type": "move", "piece": (piece.row, piece.col), "pos": pos}
-            return self.client.send(data)
 
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)

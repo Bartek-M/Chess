@@ -4,6 +4,7 @@ from socket import socket, AF_INET, SOCK_STREAM
 from threading import Thread
 
 from public.board import Board
+from public.utils import translate_pos
 
 
 class Client:
@@ -41,7 +42,19 @@ class Client:
                         color = data.get("color", "w")
                         self.board.reset(players, color)
                     case "move":
-                        pass
+                        piece_pos = data.get("piece")
+                        pos = data.get("pos")
+
+                        if not (piece_pos and pos):
+                            continue
+                        if self.board.color == "b":
+                            piece_pos = translate_pos(piece_pos)
+                            pos = translate_pos(pos)
+
+                        row, col = piece_pos
+                        piece = self.board.board[row][col]
+                        if piece:
+                            self.board.move(piece, pos, True)
                     case "win":
                         pass
                     case "disconnect":
