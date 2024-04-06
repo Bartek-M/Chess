@@ -84,7 +84,7 @@ class Board:
                 piece.valid_moves = piece.get_moves(self.board)
 
             if pos not in piece.valid_moves:
-                return
+                return False
 
             if self.client:
                 piece_pos = (piece.row, piece.col)
@@ -103,7 +103,7 @@ class Board:
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)
             del piece
-            return
+            return True
 
         if piece.king or piece.rook:
             piece.moved = True
@@ -129,6 +129,7 @@ class Board:
         self.board[y][x] = piece
         piece.set_pos((x, y))
         self.start_time = time.time()
+        return True
 
     def pause(self):
         if self.client:

@@ -62,8 +62,9 @@ class Server:
                         for player in game.players:
                             self.send(player.client, result)
             except:
-                self.handle_disconnect(client, player)
                 break
+
+        self.handle_disconnect(client, player)
 
     def join_lobby(self, code, player, name, wait=False):
         client = player.client
@@ -124,7 +125,7 @@ class Server:
 
         client.close()
 
-    def close(self, *_):
+    def close(self):
         print("[SERVER] Exit, server has stopped")
         for player in self.players:
             player.client.close()

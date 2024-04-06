@@ -27,7 +27,10 @@ class Game:
         if not piece:
             return
 
-        self.board.move(piece, pos)
+        moved = self.board.move(piece, pos)
+        if not moved:
+            return
+
         return {"type": "move", "piece": piece_pos, "pos": pos}
 
     def get_names(self):
