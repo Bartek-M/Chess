@@ -1,13 +1,15 @@
+import os
 import time
 
 from public.pieces import King, Queen, Bishop, Knight, Rook, Pawn
 from public.utils import translate_pos
 
+TIME = int(os.getenv("TIME", 600))
+
 
 class Board:
     def __init__(self, client=None):
         self.color = "w"
-        self.board = self.generate_board()
         self.client = client
 
         self.turn = "w"
@@ -15,10 +17,13 @@ class Board:
         self.paused = bool(client)
 
         self.start_time = time.time()
-        self.timers = (600, 600)
+        self.timers = (TIME, TIME)
 
         self.current = None
+        self.kings = {"w": None, "b": None}
         self.passed_pawn = None
+
+        self.board = self.generate_board()
 
     def generate_board(self):
         board = [[None for _ in range(8)] for _ in range(8)]
@@ -37,7 +42,11 @@ class Board:
             board[row][1] = Knight(row, 1, color, 3)
             board[row][2] = Bishop(row, 2, color, 2)
             board[row][queen_col] = Queen(row, queen_col, color, 1)
-            board[row][king_col] = King(row, king_col, color, 0)
+
+            king = King(row, king_col, color, 0)
+            self.kings[color] = king
+            board[row][king_col] = king
+
             board[row][5] = Bishop(row, 5, color, 2)
             board[row][6] = Knight(row, 6, color, 3)
             board[row][7] = Rook(row, 7, color, 4)
@@ -110,6 +119,7 @@ class Board:
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)
             del piece
+
             return True
 
         if piece.king or piece.rook:
@@ -148,6 +158,7 @@ class Board:
         self.board[y][x] = piece
         piece.set_pos((x, y))
         self.start_time = time.time()
+
         return True
 
     def pause(self):
@@ -165,7 +176,7 @@ class Board:
         self.turn = "w"
         self.paused = False
 
-        self.timers = (600, 600)
+        self.timers = (TIME, TIME)
         self.start_time = time.time()
 
         self.current = None

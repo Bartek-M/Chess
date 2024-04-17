@@ -65,7 +65,8 @@ def main():
             drawing.draw()
             clock.tick(FPS)
             screen = None
-        except:
+        except Exception as e:
+            print(e)
             break
 
     if client:
