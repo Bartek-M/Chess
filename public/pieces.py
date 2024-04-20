@@ -1,7 +1,5 @@
 import pygame
 
-from public.utils import is_avail
-
 
 class Piece:
     """
@@ -11,7 +9,9 @@ class Piece:
     CYAN = 56, 220, 255
     RED = 255, 50, 50
 
-    def __init__(self, row, col, color, img):
+    def __init__(self, board, row, col, color, img):
+        self.board = board
+
         self.row = row
         self.col = col
 
@@ -61,7 +61,7 @@ class King(Piece):
         self.moved = False
         self.checked = False
 
-    def get_moves(self, board):
+    def get_moves(self):
         moves = []
 
         for dx in [-1, 0, 1]:
@@ -71,17 +71,17 @@ class King(Piece):
 
                 x = self.col + dx
                 y = self.row + dy
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if avail is not None:
                     moves.append([x, y])
 
         if not self.moved:
-            moves += self.check_castle(board)
+            moves += self.check_castle()
 
         self.valid_moves = moves if moves else [None]
 
-    def check_castle(self, board):
+    def check_castle(self):
         moves = []
 
         for d in [-1, 1]:
@@ -93,7 +93,7 @@ class King(Piece):
                 if not 0 <= x < 8:
                     break
 
-                piece = board[self.row][x]
+                piece = self.board.board[self.row][x]
 
                 if piece is None:
                     dx += 1
@@ -106,13 +106,13 @@ class King(Piece):
 
         return moves
 
-    def is_attacked(self, board, heading=1):
+    def is_attacked(self, heading=1):
         # X / Y
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if type(avail) in [Queen, Rook]:
                     return True
@@ -124,10 +124,7 @@ class King(Piece):
             for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
-                avail = is_avail(board, (x, y), self.color)
-
-                if avail:
-                    print(avail)
+                avail = self.board.is_avail((x, y), self)
 
                 if (
                     type(avail) == Pawn
@@ -135,8 +132,7 @@ class King(Piece):
                     and y == self.row - 1 * heading
                 ):
                     return True
-
-                if type(avail) in [Queen, Bishop]:
+                elif type(avail) in [Queen, Bishop]:
                     return True
                 elif avail is None:
                     break
@@ -149,7 +145,7 @@ class King(Piece):
 
                 x = self.col + dx
                 y = self.row + dy
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if type(avail) == Knight:
                     return True
@@ -163,7 +159,7 @@ class King(Piece):
 
 
 class Queen(Piece):
-    def get_moves(self, board):
+    def get_moves(self):
         moves = []
 
         # X / Y
@@ -171,7 +167,7 @@ class Queen(Piece):
             for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if avail is not None:
                     moves.append([x, y])
@@ -186,7 +182,7 @@ class Queen(Piece):
             for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if avail is not None:
                     moves.append([x, y])
@@ -203,14 +199,14 @@ class Queen(Piece):
 
 
 class Bishop(Piece):
-    def get_moves(self, board):
+    def get_moves(self):
         moves = []
 
         for dx, dy in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
             for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if avail is not None:
                     moves.append([x, y])
@@ -227,7 +223,7 @@ class Bishop(Piece):
 
 
 class Knight(Piece):
-    def get_moves(self, board):
+    def get_moves(self):
         moves = []
 
         for dx in [-2, -1, 1, 2]:
@@ -237,7 +233,7 @@ class Knight(Piece):
 
                 x = self.col + dx
                 y = self.row + dy
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if avail is not None:
                     moves.append([x, y])
@@ -254,14 +250,14 @@ class Rook(Piece):
         self.rook = True
         self.moved = False
 
-    def get_moves(self, board):
+    def get_moves(self):
         moves = []
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             for d in range(1, 8):
                 x = self.col + dx * d
                 y = self.row + dy * d
-                avail = is_avail(board, (x, y), self.color)
+                avail = self.board.is_avail((x, y), self)
 
                 if avail is not None:
                     moves.append([x, y])
@@ -278,34 +274,33 @@ class Rook(Piece):
 
 
 class Pawn(Piece):
-    def __init__(self, color, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.board_color = color
         self.pawn = True
 
-    def get_moves(self, board, passed_pawn=None):
+    def get_moves(self, passed_pawn=None):
         moves = []
-        d = 1 if self.board_color == self.color else -1
+        d = 1 if self.board.color == self.color else -1
 
-        if is_avail(board, (self.col, self.row - 1 * d), self.color) == False:
+        if self.board.is_avail((self.col, self.row - 1 * d), self) == False:
             moves.append([self.col, self.row - 1 * d])
 
             if (
-                self.row == (6 if self.board_color == self.color else 1)
-                and is_avail(board, (self.col, self.row - 2 * d), self.color) == False
+                self.row == (6 if self.board.color == self.color else 1)
+                and self.board.is_avail((self.col, self.row - 2 * d), self) == False
             ):
                 moves.append([self.col, self.row - 2 * d])
 
-        if is_avail(board, (self.col - 1, self.row - 1 * d), self.color):
+        if self.board.is_avail((self.col - 1, self.row - 1 * d), self):
             moves.append([self.col - 1, self.row - 1 * d])
 
-        if is_avail(board, (self.col + 1, self.row - 1 * d), self.color):
+        if self.board.is_avail((self.col + 1, self.row - 1 * d), self):
             moves.append([self.col + 1, self.row - 1 * d])
 
         if passed_pawn:
-            if is_avail(board, [self.col - 1, self.row], self.color) == passed_pawn:
+            if self.board.is_avail([self.col - 1, self.row], self) == passed_pawn:
                 moves.append([self.col - 1, self.row - 1 * d])
-            elif is_avail(board, [self.col + 1, self.row], self.color) == passed_pawn:
+            elif self.board.is_avail([self.col + 1, self.row], self) == passed_pawn:
                 moves.append([self.col + 1, self.row - 1 * d])
 
         self.valid_moves = moves if moves else [None]

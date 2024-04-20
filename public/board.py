@@ -39,21 +39,21 @@ class Board:
 
             pawn_row = row + (-1 if row == 7 else 1)
 
-            board[row][0] = Rook(row, 0, color, 4)
-            board[row][1] = Knight(row, 1, color, 3)
-            board[row][2] = Bishop(row, 2, color, 2)
-            board[row][queen_col] = Queen(row, queen_col, color, 1)
+            board[row][0] = Rook(self, row, 0, color, 4)
+            board[row][1] = Knight(self, row, 1, color, 3)
+            board[row][2] = Bishop(self, row, 2, color, 2)
+            board[row][queen_col] = Queen(self, row, queen_col, color, 1)
 
-            king = King(row, king_col, color, 0)
+            king = King(self, row, king_col, color, 0)
             self.kings[color] = king
             board[row][king_col] = king
 
-            board[row][5] = Bishop(row, 5, color, 2)
-            board[row][6] = Knight(row, 6, color, 3)
-            board[row][7] = Rook(row, 7, color, 4)
+            board[row][5] = Bishop(self, row, 5, color, 2)
+            board[row][6] = Knight(self, row, 6, color, 3)
+            board[row][7] = Rook(self, row, 7, color, 4)
 
             for col in range(8):
-                board[pawn_row][col] = Pawn(self.color, pawn_row, col, color, 5)
+                board[pawn_row][col] = Pawn(self, pawn_row, col, color, 5)
 
         return board
 
@@ -72,9 +72,9 @@ class Board:
             return
 
         if piece.pawn:
-            piece.get_moves(self.board, self.passed_pawn)
+            piece.get_moves(self.passed_pawn)
         else:
-            piece.get_moves(self.board)
+            piece.get_moves()
 
     def reset_selected(self):
         if not self.current:
@@ -94,9 +94,9 @@ class Board:
         if not checked:
             if None in piece.valid_moves:
                 if piece.pawn:
-                    piece.get_moves(self.board, self.passed_pawn)
+                    piece.get_moves(self.passed_pawn)
                 else:
-                    piece.get_moves(self.board)
+                    piece.get_moves()
 
             if pos not in piece.valid_moves:
                 return False
@@ -162,11 +162,25 @@ class Board:
 
         self.check_kings()
         return True
+    
+    def is_avail(self, pos, piece, checked=False):
+        x, y = pos
+        if not (0 <= x < 8 and 0 <= y < 8):
+            return None
+
+        space = self.board[y][x]
+
+        if space is None:
+            return False
+        if space.color == piece.color:
+            return None
+
+        return space
 
     def check_kings(self):
         for king in self.kings.values():
             heading = 1 if king.color == self.color else -1
-            king.checked = king.is_attacked(self.board, heading)
+            king.checked = king.is_attacked(heading)
 
         print(self.kings)
 

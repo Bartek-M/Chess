@@ -2,21 +2,6 @@ import os
 import pygame
 
 
-def is_avail(board, pos, color):
-    x, y = pos
-    if not (0 <= x < 8 and 0 <= y < 8):
-        return None
-
-    piece = board[y][x]
-
-    if piece is None:
-        return False
-    if piece.color == color:
-        return None
-
-    return piece
-
-
 def translate_pos(pos):
     x, y = pos
     return [abs(x - 7), abs(y - 7)]
