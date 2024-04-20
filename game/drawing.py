@@ -132,6 +132,9 @@ class BoardDrawing:
                 if current and [j, i] in current.valid_moves:
                     self.draw_valid_moves(x, y, piece)
 
+                if [j, i] in self.board.last_moves:
+                    self.draw_last_moves(x, y)
+
                 if piece is None or piece.dragged:
                     continue
 
@@ -143,6 +146,10 @@ class BoardDrawing:
     def draw_piece(self, piece):
         assets = self.black_assets if piece.color == "b" else self.white_assets
         piece.draw(self.win, assets, TILE_SIZE, (PAD_X, PAD_Y))
+
+    def draw_last_moves(self, x, y):
+        color = self.CYAN if self.board.turn == "b" else self.RED
+        pygame.draw.rect(self.win, color, (x, y, TILE_SIZE, TILE_SIZE), 4)
 
     def draw_valid_moves(self, x, y, piece):
         if piece is None:

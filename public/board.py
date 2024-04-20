@@ -20,6 +20,7 @@ class Board:
         self.timers = (TIME, TIME)
 
         self.current = None
+        self.last_moves = []
         self.kings = {"w": None, "b": None}
         self.passed_pawn = None
 
@@ -70,11 +71,10 @@ class Board:
         if piece.color != self.turn or self.paused:
             return
 
-        piece.valid_moves = (
+        if piece.pawn:
             piece.get_moves(self.board, self.passed_pawn)
-            if piece.pawn
-            else piece.get_moves(self.board)
-        )
+        else:
+            piece.get_moves(self.board)
 
     def reset_selected(self):
         if not self.current:
@@ -93,11 +93,10 @@ class Board:
 
         if not checked:
             if None in piece.valid_moves:
-                piece.valid_moves = (
+                if piece.pawn:
                     piece.get_moves(self.board, self.passed_pawn)
-                    if piece.pawn
-                    else piece.get_moves(self.board)
-                )
+                else:
+                    piece.get_moves(self.board)
 
             if pos not in piece.valid_moves:
                 return False
@@ -114,12 +113,14 @@ class Board:
         x, y = pos
         self.board[piece.row][piece.col] = None
         self.turn = "b" if self.turn == "w" else "w"
+        self.last_moves = [[piece.col, piece.row], [x, y]]
         self.reset_selected()
 
         if piece.pawn and y in [0, 7]:
             self.board[y][x] = Queen(y, x, piece.color, 1)
             del piece
 
+            self.check_kings()
             return True
 
         if piece.king or piece.rook:
@@ -159,7 +160,15 @@ class Board:
         piece.set_pos((x, y))
         self.start_time = time.time()
 
+        self.check_kings()
         return True
+
+    def check_kings(self):
+        for king in self.kings.values():
+            heading = 1 if king.color == self.color else -1
+            king.checked = king.is_attacked(self.board, heading)
+
+        print(self.kings)
 
     def pause(self):
         if self.client:

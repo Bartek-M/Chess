@@ -8,8 +8,8 @@ class Piece:
     Chess piece representation
     """
 
-    SELECT_COLOR = 56, 220, 255
-    DRAG_COLOR = 255, 50, 50
+    CYAN = 56, 220, 255
+    RED = 255, 50, 50
 
     def __init__(self, row, col, color, img):
         self.row = row
@@ -31,8 +31,10 @@ class Piece:
         x = self.col * tile_size + padding[0]
         y = self.row * tile_size + padding[1]
 
+        color = self.CYAN if self.color == "w" else self.RED
+
         if self.selected:
-            pygame.draw.rect(win, self.SELECT_COLOR, (x, y, tile_size, tile_size), 5)
+            pygame.draw.rect(win, color, (x, y, tile_size, tile_size), 4)
 
         if self.dragged:
             x, y = pygame.mouse.get_pos()
@@ -41,9 +43,7 @@ class Piece:
             if 0 <= bx < 8 and 0 <= by < 8:
                 bx = bx * tile_size + padding[0]
                 by = by * tile_size + padding[1]
-                pygame.draw.rect(
-                    win, self.DRAG_COLOR, (bx, by, tile_size, tile_size), 5
-                )
+                pygame.draw.rect(win, color, (bx, by, tile_size, tile_size), 4)
 
             x -= tile_size // 2
             y -= tile_size // 2
@@ -59,6 +59,7 @@ class King(Piece):
         super().__init__(*args, **kwargs)
         self.king = True
         self.moved = False
+        self.checked = False
 
     def get_moves(self, board):
         moves = []
@@ -78,7 +79,7 @@ class King(Piece):
         if not self.moved:
             moves += self.check_castle(board)
 
-        return moves if moves else [None]
+        self.valid_moves = moves if moves else [None]
 
     def check_castle(self, board):
         moves = []
@@ -103,10 +104,62 @@ class King(Piece):
 
                 break
 
-        return moves if moves else [None]
+        return moves
+
+    def is_attacked(self, board, heading=1):
+        # X / Y
+        for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+            for d in range(1, 8):
+                x = self.col + dx * d
+                y = self.row + dy * d
+                avail = is_avail(board, (x, y), self.color)
+
+                if type(avail) in [Queen, Rook]:
+                    return True
+                elif avail is None:
+                    break
+
+        # DIAGONALS
+        for dx, dy in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
+            for d in range(1, 8):
+                x = self.col + dx * d
+                y = self.row + dy * d
+                avail = is_avail(board, (x, y), self.color)
+
+                if avail:
+                    print(avail)
+
+                if (
+                    type(avail) == Pawn
+                    and x in [self.col - 1, self.col + 1]
+                    and y == self.row - 1 * heading
+                ):
+                    return True
+
+                if type(avail) in [Queen, Bishop]:
+                    return True
+                elif avail is None:
+                    break
+
+        # KNIGHT
+        for dx in [-2, -1, 1, 2]:
+            for dy in [-2, -1, 1, 2]:
+                if abs(dx) == abs(dy):
+                    continue
+
+                x = self.col + dx
+                y = self.row + dy
+                avail = is_avail(board, (x, y), self.color)
+
+                if type(avail) == Knight:
+                    return True
+                elif avail is None:
+                    break
+
+        return False
 
     def __repr__(self):
-        return f"king {self.color} at [{self.row}; {self.col}]"
+        return f"king {self.color} at [{self.row}; {self.col}]; {self.checked}"
 
 
 class Queen(Piece):
@@ -143,7 +196,7 @@ class Queen(Piece):
                 if avail:
                     break
 
-        return moves if moves else [None]
+        self.valid_moves = moves if moves else [None]
 
     def __repr__(self):
         return f"queen {self.color} at [{self.row}; {self.col}]"
@@ -167,7 +220,7 @@ class Bishop(Piece):
                 if avail:
                     break
 
-        return moves if moves else [None]
+        self.valid_moves = moves if moves else [None]
 
     def __repr__(self):
         return f"bishop {self.color} at [{self.row}; {self.col}]"
@@ -189,7 +242,7 @@ class Knight(Piece):
                 if avail is not None:
                     moves.append([x, y])
 
-        return moves if moves else [None]
+        self.valid_moves = moves if moves else [None]
 
     def __repr__(self):
         return f"knight {self.color} at [{self.row}; {self.col}]"
@@ -218,7 +271,7 @@ class Rook(Piece):
                 if avail:
                     break
 
-        return moves if moves else [None]
+        self.valid_moves = moves if moves else [None]
 
     def __repr__(self):
         return f"rook {self.color} at [{self.row}; {self.col}]"
@@ -255,7 +308,7 @@ class Pawn(Piece):
             elif is_avail(board, [self.col + 1, self.row], self.color) == passed_pawn:
                 moves.append([self.col + 1, self.row - 1 * d])
 
-        return moves if moves else [None]
+        self.valid_moves = moves if moves else [None]
 
     def __repr__(self):
         return f"pawn {self.color} at [{self.row}; {self.col}]"
