@@ -14,8 +14,9 @@ class Board:
 
         self.turn = "w"
         self.players = ("Player 2", "Player 1")
-        self.paused = bool(client)
+        self.end_text = None
 
+        self.paused = bool(client)
         self.start_time = time.time()
         self.timers = (TIME, TIME)
 
@@ -201,7 +202,12 @@ class Board:
             if None not in moves:
                 break
         else:
-            print("Checkmate" if checked else "Stealmate")
+            if checked:
+                self.end_text = f"Checkmate - {'white' if self.turn == 'b' else 'black'} won"
+            else:
+                self.end_text = "Stealmate - draw"
+
+            self.pause()
 
     def pause(self):
         if self.client:
@@ -215,8 +221,9 @@ class Board:
 
         self.turn = "w"
         self.players = players if color == "w" else players[::-1]
-        self.paused = False
+        self.end_text = None
 
+        self.paused = False
         self.start_time = time.time()
         self.timers = (TIME, TIME)
 

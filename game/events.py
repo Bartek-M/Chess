@@ -64,9 +64,7 @@ class BoardHandler:
             if not (event.mod & pygame.KMOD_CTRL):
                 return None
 
-            if event.key == pygame.K_r:
-                self.board.reset()
-            elif event.key == pygame.K_p:
+            if event.key == pygame.K_p:
                 self.board.pause()
             elif event.key == pygame.K_q:
                 return "start"
