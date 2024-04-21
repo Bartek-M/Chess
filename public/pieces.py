@@ -59,7 +59,6 @@ class King(Piece):
         super().__init__(*args, **kwargs)
         self.king = True
         self.moved = False
-        self.checked = False
 
     def get_moves(self):
         moves = []
@@ -163,7 +162,7 @@ class King(Piece):
         return False
 
     def __repr__(self):
-        return f"king {self.color} at [{self.row}; {self.col}]; {self.checked}"
+        return f"king {self.color} at [{self.row}; {self.col}]"
 
 
 class Queen(Piece):
@@ -301,8 +300,9 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         self.pawn = True
 
-    def get_moves(self, passed_pawn=None):
+    def get_moves(self):
         moves = []
+        passed_pawn = self.board.passed_pawn
         d = 1 if self.board.color == self.color else -1
 
         if self.board.is_avail((self.col, self.row - 1 * d), self) == False:

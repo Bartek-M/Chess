@@ -21,8 +21,10 @@ class Board:
 
         self.current = None
         self.last_moves = []
-        self.kings = {"w": None, "b": None}
         self.passed_pawn = None
+
+        self.kings = {"w": None, "b": None}
+        self.pieces = {"w": [], "b": []}
 
         self.board = self.generate_board()
 
@@ -32,28 +34,29 @@ class Board:
         for row in [0, 7]:
             if self.color == "w":
                 color = "b" if row == 0 else "w"
-                king_col, queen_col = 4, 3
+                k_col, q_col = 4, 3
             else:
                 color = "b" if row == 7 else "w"
-                king_col, queen_col = 3, 4
+                k_col, q_col = 3, 4
 
             pawn_row = row + (-1 if row == 7 else 1)
 
-            board[row][0] = Rook(self, row, 0, color, 4)
-            board[row][1] = Knight(self, row, 1, color, 3)
-            board[row][2] = Bishop(self, row, 2, color, 2)
-            board[row][queen_col] = Queen(self, row, queen_col, color, 1)
+            self.pieces[color] = [
+                Rook(self, row, 0, color, 4),
+                Knight(self, row, 1, color, 3),
+                Bishop(self, row, 2, color, 2),
+                Queen(self, row, q_col, color, 1),
+                King(self, row, k_col, color, 0),
+                Bishop(self, row, 5, color, 2),
+                Knight(self, row, 6, color, 3),
+                Rook(self, row, 7, color, 4),
+            ] + [Pawn(self, pawn_row, col, color, 5) for col in range(8)]
 
-            king = King(self, row, king_col, color, 0)
-            self.kings[color] = king
-            board[row][king_col] = king
+            for piece in self.pieces[color]:
+                if type(piece) == King:
+                    self.kings[color] = piece
 
-            board[row][5] = Bishop(self, row, 5, color, 2)
-            board[row][6] = Knight(self, row, 6, color, 3)
-            board[row][7] = Rook(self, row, 7, color, 4)
-
-            for col in range(8):
-                board[pawn_row][col] = Pawn(self, pawn_row, col, color, 5)
+                board[piece.row][piece.col] = piece
 
         return board
 
@@ -71,10 +74,7 @@ class Board:
         if piece.color != self.turn or self.paused:
             return
 
-        if piece.pawn:
-            piece.get_moves(self.passed_pawn)
-        else:
-            piece.get_moves()
+        piece.get_moves()
 
     def reset_selected(self):
         if not self.current:
@@ -93,10 +93,7 @@ class Board:
 
         if not checked:
             if None in piece.valid_moves:
-                if piece.pawn:
-                    piece.get_moves(self.passed_pawn)
-                else:
-                    piece.get_moves()
+                piece.get_moves()
 
             if pos not in piece.valid_moves:
                 return False
@@ -117,11 +114,9 @@ class Board:
         self.reset_selected()
 
         if piece.pawn and y in [0, 7]:
-            self.board[y][x] = Queen(y, x, piece.color, 1)
-            del piece
-
-            self.check_kings()
-            return True
+            self.pieces[piece.color].append(Queen(self, y, x, piece.color, 1))
+            self.pieces[piece.color].remove(piece)
+            piece = self.pieces[piece.color][-1]
 
         if piece.king or piece.rook:
             piece.moved = True
@@ -159,7 +154,7 @@ class Board:
 
         if self.board[y][x]:
             old_piece = self.board[y][x]
-            del old_piece
+            self.pieces[old_piece.color].remove(old_piece)
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
@@ -176,7 +171,7 @@ class Board:
         king_check = bool(board)
         board = board if board else self.board
         space = board[y][x]
-        
+
         if space and space.color == piece.color:
             return None
 
@@ -190,16 +185,23 @@ class Board:
             checked = self.kings[piece.color].is_attacked(t_board, t_pos)
             if checked:
                 return "king"
-            
+
         if space is None:
             return False
-        
+
         return space
 
     def check_kings(self):
-        # for king in self.kings.values():
-            # king.checked = king.is_attacked()
-        pass
+        checked = self.kings[self.turn].is_attacked()
+
+        for piece in self.pieces[self.turn]:
+            piece.get_moves()
+            moves = piece.valid_moves
+
+            if None not in moves:
+                break
+        else:
+            print("Checkmate" if checked else "Stealmate")
 
     def pause(self):
         if self.client:
