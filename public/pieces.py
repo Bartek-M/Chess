@@ -73,6 +73,9 @@ class King(Piece):
                 y = self.row + dy
                 avail = self.board.is_avail((x, y), self)
 
+                if avail == "king":
+                    continue
+
                 if avail is not None:
                     moves.append([x, y])
 
@@ -106,13 +109,18 @@ class King(Piece):
 
         return moves
 
-    def is_attacked(self, heading=1):
+    def is_attacked(self, board=None, t_pos=None):
+        board = board if board else self.board.board
+        
+        direction = 1 if self.board.color == self.color else -1
+        row, col = t_pos if t_pos else (self.row, self.col)
+
         # X / Y
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
             for d in range(1, 8):
-                x = self.col + dx * d
-                y = self.row + dy * d
-                avail = self.board.is_avail((x, y), self)
+                x = col + dx * d
+                y = row + dy * d
+                avail = self.board.is_avail((x, y), self, board)
 
                 if type(avail) in [Queen, Rook]:
                     return True
@@ -122,14 +130,14 @@ class King(Piece):
         # DIAGONALS
         for dx, dy in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
             for d in range(1, 8):
-                x = self.col + dx * d
-                y = self.row + dy * d
-                avail = self.board.is_avail((x, y), self)
+                x = col + dx * d
+                y = row + dy * d
+                avail = self.board.is_avail((x, y), self, board)
 
                 if (
                     type(avail) == Pawn
-                    and x in [self.col - 1, self.col + 1]
-                    and y == self.row - 1 * heading
+                    and x in [col - 1, col + 1]
+                    and y == row - 1 * direction
                 ):
                     return True
                 elif type(avail) in [Queen, Bishop]:
@@ -143,9 +151,9 @@ class King(Piece):
                 if abs(dx) == abs(dy):
                     continue
 
-                x = self.col + dx
-                y = self.row + dy
-                avail = self.board.is_avail((x, y), self)
+                x = col + dx
+                y = row + dy
+                avail = self.board.is_avail((x, y), self, board)
 
                 if type(avail) == Knight:
                     return True
@@ -169,6 +177,9 @@ class Queen(Piece):
                 y = self.row + dy * d
                 avail = self.board.is_avail((x, y), self)
 
+                if avail == "king":
+                    continue
+
                 if avail is not None:
                     moves.append([x, y])
                 else:
@@ -183,6 +194,9 @@ class Queen(Piece):
                 x = self.col + dx * d
                 y = self.row + dy * d
                 avail = self.board.is_avail((x, y), self)
+
+                if avail == "king":
+                    continue
 
                 if avail is not None:
                     moves.append([x, y])
@@ -207,6 +221,9 @@ class Bishop(Piece):
                 x = self.col + dx * d
                 y = self.row + dy * d
                 avail = self.board.is_avail((x, y), self)
+
+                if avail == "king":
+                    continue
 
                 if avail is not None:
                     moves.append([x, y])
@@ -235,6 +252,9 @@ class Knight(Piece):
                 y = self.row + dy
                 avail = self.board.is_avail((x, y), self)
 
+                if avail == "king":
+                    continue
+
                 if avail is not None:
                     moves.append([x, y])
 
@@ -258,6 +278,9 @@ class Rook(Piece):
                 x = self.col + dx * d
                 y = self.row + dy * d
                 avail = self.board.is_avail((x, y), self)
+
+                if avail == "king":
+                    continue
 
                 if avail is not None:
                     moves.append([x, y])
@@ -291,10 +314,18 @@ class Pawn(Piece):
             ):
                 moves.append([self.col, self.row - 2 * d])
 
-        if self.board.is_avail((self.col - 1, self.row - 1 * d), self):
+        if self.board.is_avail((self.col - 1, self.row - 1 * d), self) not in [
+            None,
+            False,
+            "king",
+        ]:
             moves.append([self.col - 1, self.row - 1 * d])
 
-        if self.board.is_avail((self.col + 1, self.row - 1 * d), self):
+        if self.board.is_avail((self.col + 1, self.row - 1 * d), self) not in [
+            None,
+            False,
+            "king",
+        ]:
             moves.append([self.col + 1, self.row - 1 * d])
 
         if passed_pawn:

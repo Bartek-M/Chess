@@ -150,11 +150,16 @@ class Board:
 
             if x == p_pawn.col and (y + d) == p_pawn.row:
                 self.board[p_pawn.row][p_pawn.col] = None
+                del p_pawn
 
         if piece.pawn and abs(piece.row - y) == 2:
             self.passed_pawn = piece
         else:
             self.passed_pawn = None
+
+        if self.board[y][x]:
+            old_piece = self.board[y][x]
+            del old_piece
 
         self.board[y][x] = piece
         piece.set_pos((x, y))
@@ -162,27 +167,39 @@ class Board:
 
         self.check_kings()
         return True
-    
-    def is_avail(self, pos, piece, checked=False):
+
+    def is_avail(self, pos, piece, board=None):
         x, y = pos
         if not (0 <= x < 8 and 0 <= y < 8):
             return None
 
-        space = self.board[y][x]
-
-        if space is None:
-            return False
-        if space.color == piece.color:
+        king_check = bool(board)
+        board = board if board else self.board
+        space = board[y][x]
+        
+        if space and space.color == piece.color:
             return None
 
+        if not king_check:
+            t_board = [row[:] for row in board]
+            t_board[piece.row][piece.col] = None
+            t_board[y][x] = piece
+
+            t_pos = (y, x) if piece.king else None
+
+            checked = self.kings[piece.color].is_attacked(t_board, t_pos)
+            if checked:
+                return "king"
+            
+        if space is None:
+            return False
+        
         return space
 
     def check_kings(self):
-        for king in self.kings.values():
-            heading = 1 if king.color == self.color else -1
-            king.checked = king.is_attacked(heading)
-
-        print(self.kings)
+        # for king in self.kings.values():
+            # king.checked = king.is_attacked()
+        pass
 
     def pause(self):
         if self.client:
