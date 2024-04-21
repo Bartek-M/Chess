@@ -181,8 +181,8 @@ class Board:
             t_board[y][x] = piece
 
             t_pos = (y, x) if piece.king else None
-
             checked = self.kings[piece.color].is_attacked(t_board, t_pos)
+
             if checked:
                 return "king"
 
@@ -210,18 +210,21 @@ class Board:
         self.paused = not self.paused
         self.start_time = time.time()
 
-    def reset(self, players=("Player 2", "Player 1"), color=None):
-        self.players = players if color == "w" else players[::-1]
+    def reset(self, players=("Player 2", "Player 1"), color="w"):
         self.color = color
-        self.board = self.generate_board()
 
         self.turn = "w"
+        self.players = players if color == "w" else players[::-1]
         self.paused = False
 
-        self.timers = (TIME, TIME)
         self.start_time = time.time()
+        self.timers = (TIME, TIME)
 
         self.current = None
+        self.last_moves = []
+        self.passed_pawn = None
+
+        self.board = self.generate_board()
 
     def timer(self):
         if self.paused:
