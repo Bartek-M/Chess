@@ -63,10 +63,7 @@ class BoardHandler:
         if event.type == pygame.KEYUP:
             if not (event.mod & pygame.KMOD_CTRL):
                 return None
-
-            if event.key == pygame.K_p:
-                self.board.pause()
-            elif event.key == pygame.K_q:
+            if event.key == pygame.K_q:
                 return "start"
 
         if event.type == pygame.MOUSEBUTTONUP:

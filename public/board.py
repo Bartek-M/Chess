@@ -1,24 +1,31 @@
 import os
 import time
 
+import dotenv
+
 from public.pieces import King, Queen, Bishop, Knight, Rook, Pawn
 from public.utils import translate_pos
 
+dotenv.load_dotenv()
 TIME = int(os.getenv("TIME", 600))
 
 
 class Board:
     def __init__(self, client=None):
-        self.color = "w"
         self.client = client
+        self.setup()
+
+    def setup(self, players=("Player 2", "Player 1"), color="w", _time=TIME):
+        self.color = color
 
         self.turn = "w"
-        self.players = ("Player 2", "Player 1")
-        self.end_text = None
+        self.win = False
+        self.players = players if color == "w" else players[::-1]
+        self.text = None
 
-        self.paused = bool(client)
+        self.paused = bool(self.client)
         self.start_time = time.time()
-        self.timers = (TIME, TIME)
+        self.timers = (_time, _time)
 
         self.current = None
         self.last_moves = []
@@ -200,14 +207,19 @@ class Board:
             moves = piece.valid_moves
 
             if None not in moves:
-                break
-        else:
-            if checked:
-                self.end_text = f"Checkmate - {'white' if self.turn == 'b' else 'black'} won"
-            else:
-                self.end_text = "Stealmate - draw"
+                return
 
-            self.pause()
+        if self.client:
+            self.client.disconnect()
+
+        if checked:
+            player = "white" if self.turn == "b" else "black"
+            self.text = f"Checkmate - {player} won"
+        else:
+            self.text = "Stealmate - draw"
+
+        self.pause()
+        self.win = True
 
     def pause(self):
         if self.client:
@@ -216,28 +228,23 @@ class Board:
         self.paused = not self.paused
         self.start_time = time.time()
 
-    def reset(self, players=("Player 2", "Player 1"), color="w"):
-        self.color = color
-
-        self.turn = "w"
-        self.players = players if color == "w" else players[::-1]
-        self.end_text = None
-
-        self.paused = False
-        self.start_time = time.time()
-        self.timers = (TIME, TIME)
-
-        self.current = None
-        self.last_moves = []
-        self.passed_pawn = None
-
-        self.board = self.generate_board()
-
     def timer(self):
-        if self.paused:
+        if self.win:
             return
 
+        player = "white" if self.turn == "b" else "black"
         time_1, time_2 = self.timers
+
+        if time_1 <= 0 or time_2 <= 0:
+            self.text = f"Out of time - {player} won"
+            self.pause()
+            self.win = True
+
+            if self.client:
+                self.client.disconnect()
+
+        if self.paused:
+            return
 
         if self.turn == "w":
             time_1 -= time.time() - self.start_time

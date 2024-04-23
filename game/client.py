@@ -34,6 +34,9 @@ class Client:
                 data = self.server.recv(self.BUFF_SIZE).decode("utf-8")
                 data = json.loads(data)
             except:
+                if not self.board.win:
+                    self.board.text = "Disconnected from the server"
+
                 break
 
             data_type = data.get("type")
@@ -43,7 +46,10 @@ class Client:
             elif data_type == "connect":
                 players = data.get("players", ("Player 2", self.name))
                 color = data.get("color", "w")
-                self.board.reset(players, color)
+                _time = int(data.get("time", 600))
+
+                self.board.setup(players, color, _time)
+                self.board.paused = False
             elif data_type == "move":
                 piece_pos = data.get("piece")
                 pos = data.get("pos")
@@ -60,10 +66,9 @@ class Client:
                 if piece:
                     self.board.move(piece, pos, True)
             elif data_type == "quit":
-                self.board.end_text = "Another player disconnected"
+                self.board.text = "Another player disconnected"
                 self.board.paused = True
 
-        self.board.end_text = "Disconnected from the server"
         self.board.paused = True
         self.server.close()
 

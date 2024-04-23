@@ -166,18 +166,16 @@ class BoardDrawing:
         pygame.draw.circle(self.win, color, (cx, cy), radius, border)
 
     def draw_players(self):
-        if self.board.client and self.board.paused:
+        if self.board.client and self.board.paused and not self.board.win:
             name_1, name_2 = "-", self.board.client.name
             code = self.board.client.code
             info = f"Waiting... [code: {code}]"
         else:
             name_1, name_2 = self.board.players
             info = f"Turn: {'white' if self.board.turn == 'w' else 'black'}"
-            if self.board.paused:
-                info += " [Paused]"
 
-        if self.board.end_text:
-            info = self.board.end_text
+        if self.board.text:
+            info = self.board.text
 
         if self.board.color == "w":
             player_1, player_2 = f"Black: {name_1}", f"White: {name_2}"

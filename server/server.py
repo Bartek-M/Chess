@@ -1,11 +1,17 @@
+import os
 import sys
 import json
 import secrets
 from threading import Thread
 from socket import socket, AF_INET, SOCK_STREAM
 
+import dotenv
+
 from server.player import Player
 from server.game import Game
+
+dotenv.load_dotenv()
+TIME = int(os.getenv("TIME", 600))
 
 
 class Server:
@@ -56,17 +62,22 @@ class Server:
             if data_type == "hello":
                 name = data.get("name", "Player")
                 self.join_lobby(data.get("code"), player, name)
-            elif data_type == "move":
-                game = self.games.get(player.code)
-                if not game or not game.started:
-                    continue
+                continue
 
+            game = self.games.get(player.code)
+            result = None
+
+            if not game or not game.started:
+                continue
+
+            if data_type == "move":
                 result = game.move(data.get("piece"), data.get("pos"))
-                if not result:
-                    continue
 
-                for player in game.players:
-                    self.send(player.client, result)
+            if not result:
+                continue
+
+            for player in game.players:
+                self.send(player.client, result)
 
         self.handle_disconnect(client, player)
 
@@ -92,7 +103,12 @@ class Server:
 
         player.set_data(name, code)
         game.start(player)
-        data = {"type": "connect", "players": game.get_names(), "color": game.color}
+        data = {
+            "type": "connect",
+            "players": game.get_names(),
+            "color": game.color,
+            "time": TIME,
+        }
         color_2 = "b" if game.color == "w" else "w"
 
         self.send(game.players[0].client, data)
@@ -113,8 +129,9 @@ class Server:
         game = self.games.get(code)
 
         if game:
-            for p in game.players:
-                self.send(p.client, {"type": "quit"})
+            if not game.board or not game.board.win:
+                for p in game.players:
+                    self.send(p.client, {"type": "quit"})
 
             del self.games[code]
 
