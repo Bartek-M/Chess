@@ -35,4 +35,5 @@ class Game:
         return {"type": "move", "piece": piece_pos, "pos": pos}
 
     def get_names(self):
-        return [player.name for player in self.players]
+        players = self.players[::-1] if self.color == "w" else self.players
+        return [player.name for player in players]
