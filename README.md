@@ -15,7 +15,7 @@ pip install -r requirements.txt
 
 > **NOTE:** This app needs `.env` configuration file. Using `.env.example` create `.env` file and change it according to your needs. Without this, application may not work properly. 
 
-**Running:**
+## Running
 ```bash
 python main.py
 python server.py
@@ -26,11 +26,15 @@ python server.py
 Leave current game
 
 **Game Codes**<br>
-Unique codes for joining existing games, which are in the waiting queue.
+Unique codes for joining existing games, which are in the waiting queue or not yet started.
 
 - If no game is found and there are any waiting games, player will join the oldest.
-- If no game is found and there aren't any waiting games, player will have a new game created and put into a waiting queue.
-- If game code was set as **new**, player will have a new game created, which won't be put into a waiting queue.
+- If no game is found and there aren't any waiting games, new public game will be created.
+- If game code was set as **new**, new private game will be created.
+
+**Public / Private Games**
+- Public games are put into the waiting queue and everyone can join them.
+- Private game are not put into the waiting queue and only players with correct codes can join them. 
 
 > **NOTE:** Player name and game code are only used for multiplayer games and do not affect local gameplay. 
 
