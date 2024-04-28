@@ -18,13 +18,13 @@ class Drawing:
     BACKGROUND = 1, 0, 25
     COLOR = 200, 200, 200
 
-    def __init__(self, screen=None):
+    def __init__(self, screen: object = None) -> None:
         self.win = pygame.display.set_mode((WIDTH, HEIGHT))
         self.screen = screen
         self.cards = []
         self.draw()
 
-    def draw(self):
+    def draw(self) -> None:
         self.win.fill(self.BACKGROUND)
 
         if self.screen:
@@ -33,13 +33,22 @@ class Drawing:
         self.draw_cards()
         pygame.display.update()
 
-    def draw_cards(self):
+    def draw_cards(self) -> None:
         for card in self.cards:
             card.draw()
 
     @staticmethod
-    def draw_text(win, font, text, pos, color=None, center=False):
-        text = font.render(str(text), True, color if color else Drawing.COLOR)
+    def draw_text(
+        win: pygame.Surface,
+        font: pygame.font,
+        text: str,
+        pos: list[int],
+        color: tuple[int] = None,
+        center: bool = False,
+    ) -> None:
+        color = color if color else Drawing.COLOR
+        text = font.render(str(text), True, color)
+
         if center:
             pos = text.get_rect(center=pos)
 
@@ -50,32 +59,32 @@ class MenuDrawing:
     COLOR = 235, 235, 235
     RED = 235, 75, 75
 
-    def __init__(self, win, info=None):
+    def __init__(self, win: pygame.Surface, info: str = None) -> None:
         self.win = win
         self.info = info
         self.components = self.setup_components()
 
-    def draw(self):
+    def draw(self) -> None:
         self.draw_title()
         self.draw_info()
         self.draw_components()
 
-    def draw_title(self):
+    def draw_title(self) -> None:
         text = "CHESS"
         Drawing.draw_text(self.win, FONT_XL, text, (WIDTH // 2, 100), self.COLOR, True)
 
-    def draw_info(self):
+    def draw_info(self) -> None:
         if not self.info:
             return
 
         pos = (WIDTH // 2, HEIGHT - 50)
         Drawing.draw_text(self.win, FONT_L, self.info, pos, self.RED, True)
 
-    def draw_components(self):
+    def draw_components(self) -> None:
         for item in self.components.values():
             item.draw(self.win)
 
-    def setup_components(self):
+    def setup_components(self) -> dict[str:object]:
         dims = 400, 50
         x, y = WIDTH // 2 - dims[0] // 2, HEIGHT // 2 - 100
 
@@ -92,7 +101,7 @@ class MenuDrawing:
             ),
         }
 
-    def get_input(self, name, alt=None):
+    def get_input(self, name: str, alt: str = None) -> str:
         inpt = self.components.get(name)
         return inpt.text if inpt else alt
 
@@ -105,19 +114,19 @@ class BoardDrawing:
     CYAN = 56, 220, 255
     RED = 255, 50, 50
 
-    def __init__(self, win, board):
+    def __init__(self, win: pygame.Surface, board: object) -> None:
         self.win = win
         self.board = board
 
         self.white_assets, self.black_assets = load_assets(TILE_SIZE)
 
-    def draw(self):
+    def draw(self) -> None:
         self.draw_cords()
         self.draw_players()
         self.draw_timers()
         self.draw_board()
 
-    def draw_board(self):
+    def draw_board(self) -> None:
         current = self.board.current
 
         for i in range(8):
@@ -143,15 +152,15 @@ class BoardDrawing:
         if current and current.dragged:
             self.draw_piece(current)
 
-    def draw_piece(self, piece):
+    def draw_piece(self, piece: object) -> None:
         assets = self.black_assets if piece.color == "b" else self.white_assets
         piece.draw(self.win, assets, TILE_SIZE, (PAD_X, PAD_Y))
 
-    def draw_last_moves(self, x, y):
+    def draw_last_moves(self, x: int, y: int) -> None:
         color = self.CYAN if self.board.turn == "b" else self.RED
         pygame.draw.rect(self.win, color, (x, y, TILE_SIZE, TILE_SIZE), 4)
 
-    def draw_valid_moves(self, x, y, piece):
+    def draw_valid_moves(self, x: int, y: int, piece: object) -> None:
         if piece is None:
             color = self.GRAY
             radius = 12
@@ -165,7 +174,7 @@ class BoardDrawing:
         cy = y + TILE_SIZE // 2
         pygame.draw.circle(self.win, color, (cx, cy), radius, border)
 
-    def draw_players(self):
+    def draw_players(self) -> None:
         if self.board.client and self.board.paused and not self.board.win:
             name_1, name_2 = "-", self.board.client.name
             code = self.board.client.code
@@ -186,7 +195,7 @@ class BoardDrawing:
         Drawing.draw_text(self.win, FONT_L, player_1, (PAD_X, 20))
         Drawing.draw_text(self.win, FONT_L, player_2, (PAD_X, HEIGHT - 40))
 
-    def draw_timers(self):
+    def draw_timers(self) -> None:
         timer_1, timer_2 = self.board.timers
         if self.board.color == "w":
             timer_1, timer_2 = format_time(timer_1), format_time(timer_2)
@@ -197,7 +206,7 @@ class BoardDrawing:
         Drawing.draw_text(self.win, FONT_L, timer_1, (WIDTH - PAD_X - 70, HEIGHT - 40))
         self.board.timer()
 
-    def draw_cords(self):
+    def draw_cords(self) -> None:
         nums = ["8", "7", "6", "5", "4", "3", "2", "1"]
         alph = ["a", "b", "c", "d", "e", "f", "g", "h"]
 

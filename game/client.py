@@ -13,7 +13,7 @@ class Client:
     BUFF_SIZE = int(os.getenv("BUFF_SIZE", 512))
     ADDR = (HOST, PORT)
 
-    def __init__(self, name="Player", code=None):
+    def __init__(self, name: str = "Player", code: str = None) -> None:
         self.board = Board(self)
 
         self.name = name
@@ -24,11 +24,11 @@ class Client:
         Thread(target=self.receive).start()
         self.send({"type": "hello", "name": self.name, "code": self.code})
 
-    def send(self, data):
+    def send(self, data: dict) -> None:
         data = bytes(json.dumps(data), "utf8")
         self.server.send(data)
 
-    def receive(self):
+    def receive(self) -> None:
         while True:
             try:
                 data = self.server.recv(self.BUFF_SIZE).decode("utf-8")
@@ -72,7 +72,7 @@ class Client:
         self.board.paused = True
         self.server.close()
 
-    def disconnect(self):
+    def disconnect(self) -> None:
         print("Disconnect")
         self.server.close()
         del self
