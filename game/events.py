@@ -5,7 +5,7 @@ from game.drawing import PAD_X, PAD_Y, TILE_SIZE
 
 
 class BoardHandler:
-    def __init__(self, board):
+    def __init__(self, board: object) -> bool | None:
         self.board = board
 
     def click(self, mouse_pos):
@@ -34,7 +34,7 @@ class BoardHandler:
 
         self.board.reset_selected()
 
-    def drag(self, mouse_pos):
+    def drag(self, mouse_pos: tuple[int]) -> bool | None:
         mouse_x, mouse_y = mouse_pos
         x, y = (mouse_x - PAD_X) // TILE_SIZE, (mouse_y - PAD_Y) // TILE_SIZE
 
@@ -59,7 +59,7 @@ class BoardHandler:
 
         piece.dragged = True
 
-    def handle(self, event):
+    def handle(self, event: pygame.event) -> str | None:
         if event.type == pygame.KEYUP:
             if not (event.mod & pygame.KMOD_CTRL):
                 return None
@@ -75,10 +75,10 @@ class BoardHandler:
 
 
 class MenuHandler:
-    def __init__(self, drawing):
+    def __init__(self, drawing: object) -> None:
         self.drawing = drawing
 
-    def click(self, mouse_pos):
+    def click(self, mouse_pos: tuple[int]) -> str | None:
         for item in self.drawing.components.values():
             if not item.clicked(mouse_pos):
                 continue
@@ -89,7 +89,9 @@ class MenuHandler:
 
         return None
 
-    def typing(self, text_input, key=None, backspace=False):
+    def typing(
+        self, text_input: object, key: pygame.key = None, backspace: bool = False
+    ) -> None:
         if backspace:
             return text_input.backspace()
 
@@ -101,7 +103,7 @@ class MenuHandler:
 
         text_input.text += key
 
-    def handle(self, event):
+    def handle(self, event: pygame.event) -> str | None:
         if event.type == pygame.MOUSEBUTTONUP:
             return self.click(pygame.mouse.get_pos())
 

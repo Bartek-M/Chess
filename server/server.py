@@ -19,7 +19,7 @@ class Server:
     games = {}
     waiting = set()
 
-    def __init__(self, host, port, buff_size):
+    def __init__(self, host: str, port: int, buff_size: int) -> None:
         self.addr = (host, port)
         self.buff_size = buff_size
 
@@ -30,7 +30,7 @@ class Server:
         print("[SERVER] Started, waiting for connections...")
         self.listen_connections()
 
-    def listen_connections(self):
+    def listen_connections(self) -> None:
         conn_thread = Thread(target=self.handle_connect)
         conn_thread.start()
 
@@ -42,14 +42,14 @@ class Server:
 
         self.close()
 
-    def send(self, client, data):
+    def send(self, client: object, data: dict) -> None:
         try:
             data = bytes(json.dumps(data), "utf-8")
             client.send(data)
         except:
             pass
 
-    def receive(self, client, player):
+    def receive(self, client: object, player: object) -> None:
         while True:
             try:
                 data = client.recv(self.buff_size).decode("utf-8")
@@ -81,7 +81,9 @@ class Server:
 
         self.handle_disconnect(client, player)
 
-    def join_lobby(self, code, player, name, wait=False):
+    def join_lobby(
+        self, code: str, player: object, name: str, wait: bool = False
+    ) -> None:
         client = player.client
         game = self.games.get(code)
 
@@ -114,7 +116,7 @@ class Server:
         self.send(game.players[0].client, data)
         self.send(game.players[1].client, {**data, "color": color_2})
 
-    def handle_connect(self):
+    def handle_connect(self) -> None:
         while True:
             try:
                 client, addr = self.server.accept()
@@ -124,7 +126,7 @@ class Server:
             except Exception as e:
                 break
 
-    def handle_disconnect(self, client, player):
+    def handle_disconnect(self, client: object, player: object) -> None:
         code = player.code
         game = self.games.get(code)
 
@@ -144,7 +146,7 @@ class Server:
 
         client.close()
 
-    def close(self):
+    def close(self) -> None:
         print("[SERVER] Exit, server has stopped")
 
         for player in self.players:

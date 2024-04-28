@@ -16,7 +16,7 @@ FPS = 60
 TITLE = "Chess Game"
 
 
-def main():
+def main() -> None:
     run = True
     clock = pygame.time.Clock()
     pygame.display.set_caption(TITLE)
