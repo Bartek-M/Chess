@@ -2,12 +2,12 @@ import os
 import pygame
 
 
-def translate_pos(pos):
+def translate_pos(pos: list[int]) -> list[int]:
     x, y = pos
     return [abs(x - 7), abs(y - 7)]
 
 
-def format_time(time):
+def format_time(time: float) -> str:
     time = round(time)
     minute = str(time // 60)
     second = str(time % 60)
@@ -20,7 +20,7 @@ def format_time(time):
     return f"{minute}:{second}"
 
 
-def load_assets(tile_size):
+def load_assets(tile_size: int) -> tuple[list]:
     white_assets = list(
         map(
             lambda img: pygame.transform.smoothscale(img, (tile_size, tile_size)),

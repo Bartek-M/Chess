@@ -11,11 +11,16 @@ TIME = int(os.getenv("TIME", 600))
 
 
 class Board:
-    def __init__(self, client=None):
+    def __init__(self, client: object = None) -> None:
         self.client = client
         self.setup()
 
-    def setup(self, players=("Player 2", "Player 1"), color="w", _time=TIME):
+    def setup(
+        self,
+        players: tuple[str] = ("Player 2", "Player 1"),
+        color: str = "w",
+        _time: int = TIME,
+    ) -> None:
         self.color = color
 
         self.turn = "w"
@@ -36,7 +41,7 @@ class Board:
 
         self.board = self.generate_board()
 
-    def generate_board(self):
+    def generate_board(self) -> None:
         board = [[None for _ in range(8)] for _ in range(8)]
 
         for row in [0, 7]:
@@ -68,7 +73,7 @@ class Board:
 
         return board
 
-    def select(self, piece):
+    def select(self, piece: object) -> None:
         if self.current:
             self.current.selected = False
         if self.current == piece:
@@ -84,7 +89,7 @@ class Board:
 
         piece.get_moves()
 
-    def reset_selected(self):
+    def reset_selected(self) -> None:
         if not self.current:
             return
 
@@ -95,7 +100,7 @@ class Board:
         self.current.valid_moves = [None]
         self.current = None
 
-    def move(self, piece, pos, checked=False):
+    def move(self, piece: object, pos: list[int], checked: bool = False) -> bool:
         if self.paused:
             return self.reset_selected()
 
@@ -171,7 +176,7 @@ class Board:
         self.check_kings()
         return True
 
-    def is_avail(self, pos, piece, board=None):
+    def is_avail(self, pos: list[int], piece: object, board: list[list] = None) -> None:
         x, y = pos
         if not (0 <= x < 8 and 0 <= y < 8):
             return None
@@ -199,7 +204,7 @@ class Board:
 
         return space
 
-    def check_kings(self):
+    def check_kings(self) -> None:
         checked = self.kings[self.turn].is_attacked()
 
         for piece in self.pieces[self.turn]:
@@ -221,14 +226,16 @@ class Board:
         self.pause()
         self.win = True
 
-    def pause(self):
+    def pause(self) -> bool:
         if self.client:
-            return
+            return False
 
         self.paused = not self.paused
         self.start_time = time.time()
 
-    def timer(self):
+        return True
+
+    def timer(self) -> None:
         if self.win:
             return
 

@@ -9,7 +9,7 @@ class Piece:
     CYAN = 56, 220, 255
     RED = 255, 50, 50
 
-    def __init__(self, board, row, col, color, img):
+    def __init__(self, board: object, row: int, col: int, color: str, img: int) -> None:
         self.board = board
 
         self.row = row
@@ -27,7 +27,9 @@ class Piece:
         self.rook = False
         self.pawn = False
 
-    def draw(self, win, assets, tile_size, padding):
+    def draw(
+        self, win: pygame.Surface, assets: tuple[list], tile_size: int, padding: int
+    ) -> None:
         x = self.col * tile_size + padding[0]
         y = self.row * tile_size + padding[1]
 
@@ -50,17 +52,18 @@ class Piece:
 
         win.blit(assets[self.img], (x, y))
 
-    def set_pos(self, pos):
+    def set_pos(self, pos: list[int]) -> list[int]:
         self.col, self.row = pos
+        return pos
 
 
 class King(Piece):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         self.king = True
         self.moved = False
 
-    def get_moves(self):
+    def get_moves(self) -> None:
         moves = []
 
         for dx in [-1, 0, 1]:
@@ -83,7 +86,7 @@ class King(Piece):
 
         self.valid_moves = moves if moves else [None]
 
-    def check_castle(self):
+    def check_castle(self) -> list[list[int]]:
         moves = []
 
         for d in [-1, 1]:
@@ -108,9 +111,9 @@ class King(Piece):
 
         return moves
 
-    def is_attacked(self, board=None, t_pos=None):
+    def is_attacked(self, board: list[list] = None, t_pos: list[int] = None) -> bool:
         board = board if board else self.board.board
-        
+
         direction = 1 if self.board.color == self.color else -1
         row, col = t_pos if t_pos else (self.row, self.col)
 
@@ -161,12 +164,12 @@ class King(Piece):
 
         return False
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"king {self.color} at [{self.row}; {self.col}]"
 
 
 class Queen(Piece):
-    def get_moves(self):
+    def get_moves(self) -> None:
         moves = []
 
         # X / Y
@@ -207,12 +210,12 @@ class Queen(Piece):
 
         self.valid_moves = moves if moves else [None]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"queen {self.color} at [{self.row}; {self.col}]"
 
 
 class Bishop(Piece):
-    def get_moves(self):
+    def get_moves(self) -> None:
         moves = []
 
         for dx, dy in [(1, 1), (-1, -1), (-1, 1), (1, -1)]:
@@ -234,12 +237,12 @@ class Bishop(Piece):
 
         self.valid_moves = moves if moves else [None]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"bishop {self.color} at [{self.row}; {self.col}]"
 
 
 class Knight(Piece):
-    def get_moves(self):
+    def get_moves(self) -> None:
         moves = []
 
         for dx in [-2, -1, 1, 2]:
@@ -259,7 +262,7 @@ class Knight(Piece):
 
         self.valid_moves = moves if moves else [None]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"knight {self.color} at [{self.row}; {self.col}]"
 
 
@@ -269,7 +272,7 @@ class Rook(Piece):
         self.rook = True
         self.moved = False
 
-    def get_moves(self):
+    def get_moves(self) -> None:
         moves = []
 
         for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
@@ -291,7 +294,7 @@ class Rook(Piece):
 
         self.valid_moves = moves if moves else [None]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"rook {self.color} at [{self.row}; {self.col}]"
 
 
@@ -300,7 +303,7 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         self.pawn = True
 
-    def get_moves(self):
+    def get_moves(self) -> None:
         moves = []
         passed_pawn = self.board.passed_pawn
         d = 1 if self.board.color == self.color else -1
@@ -336,5 +339,5 @@ class Pawn(Piece):
 
         self.valid_moves = moves if moves else [None]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"pawn {self.color} at [{self.row}; {self.col}]"
