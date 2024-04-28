@@ -11,7 +11,7 @@ class Button:
         pos: list[int],
         dims: list[int],
         font: pygame.font,
-        action: function = lambda: None,
+        action=lambda: None,
         colors: list[tuple] = None,
     ) -> None:
         self.colors = colors if colors else (self.BG_COLOR, self.FG_COLOR)

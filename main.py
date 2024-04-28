@@ -43,7 +43,7 @@ def main() -> None:
         elif screen == "game-2":
             name = drawing.screen.get_input("name-inpt", "Player")
             code = drawing.screen.get_input("code-inpt", "").lower()
-            os.environ["NAME"] = name
+            os.environ["PLAYER_NAME"] = name
 
             try:
                 client = Client(name, code)

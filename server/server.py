@@ -11,6 +11,8 @@ from server.player import Player
 from server.game import Game
 
 dotenv.load_dotenv()
+
+NAME = os.getenv("DEFAULT_NAME", "Player")
 TIME = int(os.getenv("TIME", 600))
 
 
@@ -60,7 +62,7 @@ class Server:
             data_type = data.get("type", None)
 
             if data_type == "hello":
-                name = data.get("name", "Player")
+                name = data.get("name", NAME)
                 self.join_lobby(data.get("code"), player, name)
                 continue
 
