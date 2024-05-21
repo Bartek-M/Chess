@@ -308,14 +308,17 @@ class Pawn(Piece):
         passed_pawn = self.board.passed_pawn
         d = 1 if self.board.color == self.color else -1
 
-        if self.board.is_avail((self.col, self.row - 1 * d), self) == False:
+        first_move = self.board.is_avail((self.col, self.row - 1 * d), self)
+
+        if first_move == False:
             moves.append([self.col, self.row - 1 * d])
 
-            if (
-                self.row == (6 if self.board.color == self.color else 1)
-                and self.board.is_avail((self.col, self.row - 2 * d), self) == False
-            ):
-                moves.append([self.col, self.row - 2 * d])
+        if (
+            (first_move in [False, "king"]) and
+            self.row == (6 if self.board.color == self.color else 1)
+            and self.board.is_avail((self.col, self.row - 2 * d), self) == False
+        ):
+            moves.append([self.col, self.row - 2 * d])
 
         if self.board.is_avail((self.col - 1, self.row - 1 * d), self) not in [
             None,
