@@ -1,12 +1,20 @@
 import os
+
 import pygame
+from dotenv import load_dotenv
 
 from game.components import Button, TextInput
 from public.utils import format_time, load_assets
 
+load_dotenv()
+WIDTH = int(os.getenv("WIDTH", 640))
+
 PAD_X, PAD_Y = 60, 90
-WIDTH, HEIGHT = 640 + PAD_X * 2, 640 + PAD_Y * 2 + 20
-TILE_SIZE = (WIDTH - PAD_X * 2) // 8
+TILE_SIZE = WIDTH // 8
+
+WIDTH += PAD_X * 2
+HEIGHT = int(os.getenv("HEIGHT", 640)) + PAD_Y * 2 + 20
+
 
 pygame.font.init()
 FONT_M = pygame.font.SysFont("consolas", 18)
