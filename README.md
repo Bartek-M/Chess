@@ -42,3 +42,5 @@ Unique codes for joining existing games, which are in the waiting queue or not y
 NOT FOR COMMERCIAL USE 
 
 > If you intend to use any of my code, for commercial use, please contact me and get my permission.
+
+<!-- GitAds-Verify: 5V7T41TOJEA1LM216GOVLGKH1AB6U2N2 -->
